@@ -20,11 +20,19 @@ namespace Phonebook.Services.Person
         public Task<Models.Person> GetPersonByIdAsync(int personId) =>
             _context.People.FindAsync(personId);
 
-        public async Task<bool> SavePersonAsync(Models.Person person)
+        public async Task<bool> CreatePersonAsync(Models.Person person)
         {
             _context.People.Add(person);
             return await _context.SaveChangesAsync() == 1;
         }
+
+        public async Task<bool> UpdatePersonAsync(Models.Person person)
+        {
+            _context.People.Attach(person);
+            _context.Entry(person).State = EntityState.Modified;
+            return await _context.SaveChangesAsync() == 1;
+        }
+
         public async Task<bool> DeletePersonAsync(int personId)
         {
             var person = new Models.Person { PersonId = personId, Deleted = true };

@@ -1,6 +1,8 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Phonebook.Common;
+using Phonebook.Models;
 using Phonebook.Services.Person;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 
 [assembly: ApiConventionType(typeof(PhonebookApiConventions))]
@@ -23,16 +25,16 @@ namespace Phonebook.Controllers
         /// <param name="personId">Person identifier</param>
         /// <returns>Person</returns>
         [HttpGet("{personId:int}")]
-        public ActionResult<Task> FindPersonById(int personId) =>
-            _personService.GetPersonByIdAsync(personId);
+        public async Task<Person> FindPersonById(int personId) =>
+            await _personService.GetPersonByIdAsync(personId);
 
         /// <summary>
         /// Returns People.
         /// </summary>
         /// <returns>List of People</returns>
         [HttpGet]
-        public ActionResult<Task> GetPeople() =>
-            _personService.GetPeopleAsync();
+        public async Task<IEnumerable<Person>> GetPeople() =>
+            await _personService.GetPeopleAsync();
 
         /// <summary>
         /// Add a new Person to the Phonebook.
@@ -40,8 +42,8 @@ namespace Phonebook.Controllers
         /// <param name="person">Person data</param>
         /// <returns></returns>
         [HttpPost]
-        public ActionResult<Task> CreatePerson(Models.Person person) =>
-            _personService.SavePersonAsync(person);
+        public async Task<ActionResult<bool>> CreatePerson(Person person) =>
+            Created(nameof(Person), await _personService.CreatePersonAsync(person));
 
         /// <summary>
         /// Update an existing Person.
@@ -50,8 +52,8 @@ namespace Phonebook.Controllers
         /// <param name="person">Person data</param>
         /// <returns></returns>
         [HttpPut("{personId:int}")]
-        public ActionResult<Task> UpdatePerson(int personId, Models.Person person) =>
-            _personService.SavePersonAsync(person);
+        public async Task<bool> UpdatePerson(int personId, Person person) =>
+            await _personService.UpdatePersonAsync(person);
 
         /// <summary>
         /// Delete Person by its identification.
@@ -59,7 +61,7 @@ namespace Phonebook.Controllers
         /// <param name="personId">Person identifier</param>
         /// <returns></returns>
         [HttpDelete("{personId:int}")]
-        public ActionResult<Task> DeletePerson(int personId) =>
-            _personService.DeletePersonAsync(personId);
+        public async Task<bool> DeletePerson(int personId) =>
+            await _personService.DeletePersonAsync(personId);
     }
 }

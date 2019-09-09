@@ -9,7 +9,9 @@ namespace Phonebook.Services.Person
 
         Task<IEnumerable<Models.Person>> GetPeopleAsync();
 
-        Task<bool> SavePersonAsync(Models.Person person);
+        Task<bool> CreatePersonAsync(Models.Person person);
+
+        Task<bool> UpdatePersonAsync(Models.Person person);
 
         Task<bool> DeletePersonAsync(int personId);
     }

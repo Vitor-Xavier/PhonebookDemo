@@ -1,8 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace Phonebook.Context
 {
@@ -10,6 +7,22 @@ namespace Phonebook.Context
     {
         public static void Seed(this ModelBuilder modelBuilder)
         {
+            modelBuilder.Entity<Models.Person>().HasData(
+                new Models.Person
+                {
+                    PersonId = 1,
+                    Name = "Vitor Xavier de Souza",
+                    BirthDate = new DateTime(1997, 01, 06)
+                });
+
+            modelBuilder.Entity<Models.Contact>().HasData(
+                new Models.Contact
+                {
+                    ContactId = 1,
+                    PersonId = 1,
+                    Text = "vitorvxs@live.com",
+                    ContactType = Models.ContactType.Email
+                });
         }
     }
 }

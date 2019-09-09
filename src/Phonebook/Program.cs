@@ -1,12 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore;
+﻿using Microsoft.AspNetCore;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.Logging;
 
 namespace Phonebook
 {
@@ -19,6 +12,12 @@ namespace Phonebook
 
         public static IWebHostBuilder CreateWebHostBuilder(string[] args) =>
             WebHost.CreateDefaultBuilder(args)
-                .UseStartup<Startup>();
+                .UseKestrel()
+                .UseIISIntegration()
+                .UseStartup<Startup>()
+                .ConfigureKestrel((context, options) =>
+                {
+                    options.Limits.MaxConcurrentConnections = 10;
+                });
     }
 }

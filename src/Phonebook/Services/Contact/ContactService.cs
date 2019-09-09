@@ -21,7 +21,13 @@ namespace Phonebook.Services.Contact
         public async Task<IEnumerable<Models.Contact>> GetContactsByPersonAsync(int personId) =>
             await _context.Contacts.Where(c => c.PersonId == personId).ToListAsync();
 
-        public async Task<bool> SaveContactAsync(Models.Contact contact)
+        public async Task<bool> CreateContactAsync(Models.Contact contact)
+        {
+            _context.Contacts.Add(contact);
+            return (await _context.SaveChangesAsync() == 1);
+        }
+
+        public async Task<bool> UpdateContactAsync(Models.Contact contact)
         {
             _context.Contacts.Add(contact);
             return (await _context.SaveChangesAsync() == 1);

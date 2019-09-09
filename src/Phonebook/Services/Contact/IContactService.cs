@@ -9,7 +9,9 @@ namespace Phonebook.Services.Contact
 
         Task<IEnumerable<Models.Contact>> GetContactsByPersonAsync(int personId);
 
-        Task<bool> SaveContactAsync(Models.Contact contact);
+        Task<bool> CreateContactAsync(Models.Contact contact);
+
+        Task<bool> UpdateContactAsync(Models.Contact contact);
 
         Task<bool> DeleteContactAsync(int contatactId);
     }
