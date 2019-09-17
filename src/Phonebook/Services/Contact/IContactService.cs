@@ -5,14 +5,14 @@ namespace Phonebook.Services.Contact
 {
     public interface IContactService
     {
-        Task<Models.Contact> GetContactByIdAsync(int contactId);
+        Task<Models.Contact> GetContactById(int contactId);
 
-        Task<IEnumerable<Models.Contact>> GetContactsByPersonAsync(int personId);
+        Task<IEnumerable<Models.Contact>> GetContactsByPerson(int personId);
 
-        Task<bool> CreateContactAsync(Models.Contact contact);
+        Task<bool> CreateContact(Models.Contact contact);
 
-        Task<bool> UpdateContactAsync(Models.Contact contact);
+        Task<bool> UpdateContact(Models.Contact contact);
 
-        Task<bool> DeleteContactAsync(int contatactId);
+        Task<bool> DeleteContact(int contatactId);
     }
 }

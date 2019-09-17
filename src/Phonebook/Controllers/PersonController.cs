@@ -26,7 +26,7 @@ namespace Phonebook.Controllers
         /// <returns>Person</returns>
         [HttpGet("{personId:int}")]
         public async Task<Person> FindPersonById(int personId) =>
-            await _personService.GetPersonByIdAsync(personId);
+            await _personService.GetPersonById(personId);
 
         /// <summary>
         /// Returns People.
@@ -34,7 +34,7 @@ namespace Phonebook.Controllers
         /// <returns>List of People</returns>
         [HttpGet]
         public async Task<IEnumerable<Person>> GetPeople() =>
-            await _personService.GetPeopleAsync();
+            await _personService.GetPeople();
 
         /// <summary>
         /// Add a new Person to the Phonebook.
@@ -43,7 +43,7 @@ namespace Phonebook.Controllers
         /// <returns></returns>
         [HttpPost]
         public async Task<ActionResult<bool>> CreatePerson(Person person) =>
-            Created(nameof(Person), await _personService.CreatePersonAsync(person));
+            Created(nameof(Person), await _personService.CreatePerson(person));
 
         /// <summary>
         /// Update an existing Person.
@@ -53,7 +53,7 @@ namespace Phonebook.Controllers
         /// <returns></returns>
         [HttpPut("{personId:int}")]
         public async Task<bool> UpdatePerson(int personId, Person person) =>
-            await _personService.UpdatePersonAsync(person);
+            await _personService.UpdatePerson(person);
 
         /// <summary>
         /// Delete Person by its identification.
@@ -62,6 +62,6 @@ namespace Phonebook.Controllers
         /// <returns></returns>
         [HttpDelete("{personId:int}")]
         public async Task<bool> DeletePerson(int personId) =>
-            await _personService.DeletePersonAsync(personId);
+            await _personService.DeletePerson(personId);
     }
 }

@@ -10,7 +10,9 @@ namespace Phonebook.Models
         [Required, StringLength(40)]
         public string Text { get; set; }
 
-        public ContactType ContactType { get; set; }
+        public int ContactTypeId { get; set; }
+
+        public virtual ContactType ContactType { get; set; }
 
         public int PersonId { get; set; }
 

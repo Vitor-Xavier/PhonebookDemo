@@ -5,10 +5,6 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Phonebook.Context;
-using Phonebook.Services.Person;
-using System;
-using System.IO;
-using System.Reflection;
 
 namespace Phonebook
 {
@@ -30,27 +26,10 @@ namespace Phonebook
                 options.UseSqlServer(Configuration.GetConnectionString("PhonebookDatabase")));
 
             services.AddHealthChecks().AddDbContextCheck<PhonebookContext>();
-            services.AddScoped<IPersonService, PersonService>();
 
-            services.AddCors();
-
-            services.AddSwaggerGen(c =>
-            {
-                c.SwaggerDoc("v1", new Swashbuckle.AspNetCore.Swagger.Info
-                {
-                    Title = "Phonebook",
-                    Version = "v1",
-                    Contact = new Swashbuckle.AspNetCore.Swagger.Contact
-                    {
-                        Name = "Vitor Xavier de Souza",
-                        Email = "vitorvxs@live.com",
-                        Url = "https://github.com/Vitor-Xavier"
-                    }
-                });
-                var xmlFile = $"{Assembly.GetExecutingAssembly().GetName().Name}.xml";
-                var xmlPath = Path.Combine(AppContext.BaseDirectory, xmlFile);
-                c.IncludeXmlComments(xmlPath);
-            });
+            services.ConfigureScopes();
+            services.ConfigureCors();
+            services.ConfigureSwagger();
 
             services.AddMvc().AddJsonOptions(options =>
             {
@@ -71,18 +50,13 @@ namespace Phonebook
                 app.UseHsts();
             }
 
-            //using (var serviceScope = app.ApplicationServices.GetService<IServiceScopeFactory>().CreateScope())
-            //{
-            //    var context = serviceScope.ServiceProvider.GetRequiredService<PhonebookContext>();
-            //    context.Database.EnsureCreated();
-            //}
+            using (var serviceScope = app.ApplicationServices.GetService<IServiceScopeFactory>().CreateScope())
+            {
+                var context = serviceScope.ServiceProvider.GetRequiredService<PhonebookContext>();
+                context.Database.EnsureCreated();
+            }
 
             app.UseHealthChecks("/health");
-
-            app.UseCors(option => option
-                    .AllowAnyOrigin()
-                    .AllowAnyMethod()
-                    .AllowAnyHeader());
 
             //app.UseHttpsRedirection();
 
