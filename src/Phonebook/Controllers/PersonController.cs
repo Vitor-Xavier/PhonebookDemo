@@ -33,8 +33,8 @@ namespace Phonebook.Controllers
         /// </summary>
         /// <returns>List of People</returns>
         [HttpGet]
-        public async Task<IEnumerable<Person>> GetPeople() =>
-            await _personService.GetPeople();
+        public async Task<IEnumerable<Person>> GetPeopleByUser(int userId) =>
+            await _personService.GetPeopleByUser(userId);
 
         /// <summary>
         /// Add a new Person to the Phonebook.
@@ -42,7 +42,7 @@ namespace Phonebook.Controllers
         /// <param name="person">Person data</param>
         /// <returns></returns>
         [HttpPost]
-        public async Task<ActionResult<bool>> CreatePerson(Person person) =>
+        public async Task<ActionResult<bool>> PostPerson(Person person) =>
             Created(nameof(Person), await _personService.CreatePerson(person));
 
         /// <summary>
@@ -52,7 +52,7 @@ namespace Phonebook.Controllers
         /// <param name="person">Person data</param>
         /// <returns></returns>
         [HttpPut("{personId:int}")]
-        public async Task<bool> UpdatePerson(int personId, Person person) =>
+        public async Task<bool> PutPerson(int personId, Person person) =>
             await _personService.UpdatePerson(person);
 
         /// <summary>

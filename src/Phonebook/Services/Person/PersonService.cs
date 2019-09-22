@@ -1,6 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Phonebook.Context;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace Phonebook.Services.Person
@@ -14,8 +15,8 @@ namespace Phonebook.Services.Person
             _context = context;
         }
 
-        public async Task<IEnumerable<Models.Person>> GetPeople() =>
-            await _context.People.AsNoTracking().ToListAsync();
+        public async Task<IEnumerable<Models.Person>> GetPeopleByUser(int userId) =>
+            await _context.People.Where(p => p.UserId == userId).AsNoTracking().ToListAsync();
 
         public Task<Models.Person> GetPersonById(int personId) =>
             _context.People.FindAsync(personId);

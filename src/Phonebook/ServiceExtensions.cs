@@ -1,4 +1,6 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
+using Phonebook.Services.Contact;
+using Phonebook.Services.ContactType;
 using Phonebook.Services.Person;
 using System;
 using System.IO;
@@ -44,6 +46,8 @@ namespace Phonebook
         public static void ConfigureScopes(this IServiceCollection services)
         {
             services.AddScoped<IPersonService, PersonService>();
+            services.AddScoped<IContactService, ContactService>();
+            services.AddScoped<IContactTypeService, ContactTypeService>();
         }
     }
 }

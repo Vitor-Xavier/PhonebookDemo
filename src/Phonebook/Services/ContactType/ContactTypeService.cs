@@ -1,5 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Caching.Memory;
 using Phonebook.Context;
+using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
@@ -9,13 +11,21 @@ namespace Phonebook.Services.ContactType
     {
         private readonly PhonebookContext _context;
 
-        public ContactTypeService(PhonebookContext context)
+        private readonly IMemoryCache _memoryCache;
+
+        public ContactTypeService(IMemoryCache memoryCache, PhonebookContext context)
         {
             _context = context;
+            _memoryCache = memoryCache;
         }
 
         public async Task<IEnumerable<Models.ContactType>> GetContactTypes() =>
-            await _context.ContactTypes.AsNoTracking().ToListAsync();
+            await _memoryCache.GetOrCreateAsync("contacts", entry =>
+            {
+                entry.AbsoluteExpirationRelativeToNow = TimeSpan.FromHours(2);
+                entry.SlidingExpiration = TimeSpan.FromMinutes(30);
+                return _context.ContactTypes.AsNoTracking().ToListAsync();
+            });
 
         public async Task<Models.ContactType> GetContactTypeById(int contactTypeId) =>
             await _context.ContactTypes.AsNoTracking().SingleOrDefaultAsync(c => c.ContactTypeId.Equals(contactTypeId));

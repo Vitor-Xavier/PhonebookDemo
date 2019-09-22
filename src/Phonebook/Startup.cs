@@ -30,6 +30,7 @@ namespace Phonebook
             services.ConfigureScopes();
             services.ConfigureCors();
             services.ConfigureSwagger();
+            services.AddMemoryCache();
 
             services.AddMvc().AddJsonOptions(options =>
             {

@@ -13,6 +13,10 @@ namespace Phonebook.Models
 
         public DateTime BirthDate { get; set; }
 
+        public int UserId { get; set; }
+
+        public virtual User User { get; set; }
+
         public virtual ICollection<Contact> Contacts { get; set; }
 
         public override bool Equals(object obj) =>
