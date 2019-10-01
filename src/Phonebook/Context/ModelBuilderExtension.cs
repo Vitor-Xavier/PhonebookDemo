@@ -57,10 +57,23 @@ namespace Phonebook.Context
                     UpdatedAt = DateTime.Now
                 });
 
+            modelBuilder.Entity<Models.User>().HasData(
+                new Models.User
+                {
+                    UserId = 1,
+                    Name = "Vitor Xavier de Souza",
+                    Email = "vitorvxs@live.com",
+                    Password = "ca978112ca1bbdcafac231b39a23dc4da786eff8147c4e72b9807785afee48bb",
+                    Deleted = false,
+                    CreatedAt = DateTime.Now,
+                    UpdatedAt = DateTime.Now
+                });
+
             modelBuilder.Entity<Models.Person>().HasData(
                 new Models.Person
                 {
                     PersonId = 1,
+                    UserId = 1,
                     Name = "Vitor Xavier de Souza",
                     BirthDate = new DateTime(1997, 01, 06),
                     Deleted = false,
