@@ -30,8 +30,8 @@ namespace Phonebook.Controllers
         /// Returns Contacts.
         /// </summary>
         /// <returns>List of Contacts</returns>
-        [HttpGet("{personId:int}")]
-        public async Task<IEnumerable<Contact>> GetPeopleByUser(int personId) =>
+        [HttpGet("Person/{personId:int}")]
+        public async Task<IEnumerable<Contact>> GetContactsByPerson(int personId) =>
             await _contactService.GetContactsByPerson(personId);
 
         /// <summary>

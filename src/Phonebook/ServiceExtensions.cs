@@ -2,6 +2,7 @@
 using Phonebook.Services.Contact;
 using Phonebook.Services.ContactType;
 using Phonebook.Services.Person;
+using Phonebook.Services.User;
 using System;
 using System.IO;
 using System.Reflection;
@@ -45,6 +46,7 @@ namespace Phonebook
 
         public static void ConfigureScopes(this IServiceCollection services)
         {
+            services.AddScoped<IUserService, UserService>();
             services.AddScoped<IPersonService, PersonService>();
             services.AddScoped<IContactService, ContactService>();
             services.AddScoped<IContactTypeService, ContactTypeService>();

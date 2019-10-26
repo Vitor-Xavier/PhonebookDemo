@@ -16,6 +16,9 @@ namespace Phonebook.Services.User
         public async Task<Models.User> GetUserById(int userId) =>
             await _context.Users.SingleOrDefaultAsync(u => u.UserId == userId);
 
+        public async Task<Models.User> GetUserByUsername(string username) =>
+            await _context.Users.SingleOrDefaultAsync(u => u.Username.Equals(username));
+
         public async Task<bool> CreateUser(Models.User user)
         {
             _context.Users.Add(user);

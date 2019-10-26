@@ -6,6 +6,8 @@ namespace Phonebook.Services.User
     {
         Task<Models.User> GetUserById(int userId);
 
+        Task<Models.User> GetUserByUsername(string username);
+
         Task<bool> CreateUser(Models.User user);
 
         Task<bool> UpdateUser(Models.User user);

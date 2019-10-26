@@ -63,6 +63,7 @@ namespace Phonebook.Context
                     UserId = 1,
                     Name = "Vitor Xavier de Souza",
                     Email = "vitorvxs@live.com",
+                    Username = "vitorxs",
                     Password = "ca978112ca1bbdcafac231b39a23dc4da786eff8147c4e72b9807785afee48bb",
                     Deleted = false,
                     CreatedAt = DateTime.Now,

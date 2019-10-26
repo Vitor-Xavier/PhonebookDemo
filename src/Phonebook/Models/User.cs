@@ -11,6 +11,9 @@ namespace Phonebook.Models
         [Required, StringLength(40)]
         public string Name { get; set; }
 
+        [Required, StringLength(40)]
+        public string Username { get; set; }
+
         [Required, StringLength(60)]
         public string Email { get; set; }
 

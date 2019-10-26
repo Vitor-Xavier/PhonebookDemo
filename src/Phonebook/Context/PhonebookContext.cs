@@ -72,6 +72,7 @@ namespace Phonebook.Context
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
+            modelBuilder.Entity<User>().HasIndex(e => e.Username).IsUnique();
             modelBuilder.Seed();
         }
     }
