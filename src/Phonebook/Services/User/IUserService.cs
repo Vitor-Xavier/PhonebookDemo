@@ -10,7 +10,7 @@ namespace Phonebook.Services.User
 
         Task<bool> CreateUser(Models.User user);
 
-        Task<bool> UpdateUser(Models.User user);
+        Task<bool> UpdateUser(int userId, Models.User user);
 
         Task<bool> DeleteUser(int userId);
     }

@@ -11,7 +11,7 @@ namespace Phonebook.Services.Person
 
         Task<bool> CreatePerson(Models.Person person);
 
-        Task<bool> UpdatePerson(Models.Person person);
+        Task<bool> UpdatePerson(int personId, Models.Person person);
 
         Task<bool> DeletePerson(int personId);
     }

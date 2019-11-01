@@ -1,10 +1,14 @@
 ﻿using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.ResponseCompression;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Logging.Console;
 using Phonebook.Context;
+using System.IO.Compression;
 
 namespace Phonebook
 {
@@ -17,20 +21,29 @@ namespace Phonebook
 
         public IConfiguration Configuration { get; }
 
+        public static readonly ILoggerFactory loggerFactory = new LoggerFactory(new[] { new ConsoleLoggerProvider((_, __) => true, true) });
+
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
 
             services.AddDbContext<PhonebookContext>(options =>
-                options.UseSqlServer(Configuration.GetConnectionString("PhonebookDatabase")));
+                options.UseLoggerFactory(loggerFactory)
+                    .EnableSensitiveDataLogging()
+                    .UseSqlServer(Configuration.GetConnectionString("PhonebookDatabase")));
 
             services.AddHealthChecks().AddDbContextCheck<PhonebookContext>();
-
             services.ConfigureScopes();
             services.ConfigureCors();
             services.ConfigureSwagger();
             services.AddMemoryCache();
+
+            services.AddResponseCompression();
+
+            services.Configure<GzipCompressionProviderOptions>(options => {
+                options.Level = CompressionLevel.Fastest;
+            });
 
             services.AddMvc().AddJsonOptions(options =>
             {
@@ -39,10 +52,11 @@ namespace Phonebook
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, IHostingEnvironment env)
+        public void Configure(IApplicationBuilder app, IHostingEnvironment env, ILogger<Startup> logger)
         {
             if (env.IsDevelopment())
             {
+                logger.LogInformation("Development environment");
                 app.UseDeveloperExceptionPage();
             }
             else

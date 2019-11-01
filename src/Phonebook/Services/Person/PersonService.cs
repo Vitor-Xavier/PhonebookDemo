@@ -1,5 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
 using Phonebook.Context;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -8,10 +10,13 @@ namespace Phonebook.Services.Person
 {
     public class PersonService : IPersonService
     {
+        private readonly ILogger _logger;
+
         private readonly PhonebookContext _context;
 
-        public PersonService(PhonebookContext context)
+        public PersonService(ILogger<PersonService> logger, PhonebookContext context)
         {
+            _logger = logger;
             _context = context;
         }
 
@@ -23,12 +28,17 @@ namespace Phonebook.Services.Person
 
         public async Task<bool> CreatePerson(Models.Person person)
         {
+            if (!IsValid(person)) return false;
+
             _context.People.Add(person);
             return await _context.SaveChangesAsync() == 1;
         }
 
-        public async Task<bool> UpdatePerson(Models.Person person)
+        public async Task<bool> UpdatePerson(int personId, Models.Person person)
         {
+            if (!IsValid(person)) return false;
+            person.PersonId = personId;
+
             _context.People.Attach(person);
             _context.Entry(person).State = EntityState.Modified;
             return await _context.SaveChangesAsync() == 1;
@@ -39,6 +49,16 @@ namespace Phonebook.Services.Person
             var person = new Models.Person { PersonId = personId, Deleted = true };
             _context.People.Attach(person);
             return await _context.SaveChangesAsync() == 1;
+        }
+
+        public bool IsValid(Models.Person person)
+        {
+            if (person is null) return false;
+            if (string.IsNullOrWhiteSpace(person.Name)) return false;
+            if (person.BirthDate == default(DateTime)) return false;
+
+            _logger.LogInformation("Person {0} is valid.", person.Name);
+            return true;
         }
     }
 }

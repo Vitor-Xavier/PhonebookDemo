@@ -32,7 +32,7 @@ namespace Phonebook.Controllers
         /// Returns People.
         /// </summary>
         /// <returns>List of People</returns>
-        [HttpGet]
+        [HttpGet("User/{userId:int}")]
         public async Task<IEnumerable<Person>> GetPeopleByUser(int userId) =>
             await _personService.GetPeopleByUser(userId);
 
@@ -53,7 +53,7 @@ namespace Phonebook.Controllers
         /// <returns></returns>
         [HttpPut("{personId:int}")]
         public async Task<bool> PutPerson(int personId, Person person) =>
-            await _personService.UpdatePerson(person);
+            await _personService.UpdatePerson(personId, person);
 
         /// <summary>
         /// Delete Person by its identification.

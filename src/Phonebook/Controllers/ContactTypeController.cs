@@ -53,7 +53,7 @@ namespace Phonebook.Controllers
         /// <returns></returns>
         [HttpPut("{contactTypeId:int}")]
         public async Task<bool> PutContactType(int contactTypeId, ContactType contactType) =>
-            await _contactTypeService.UpdatContactType(contactType);
+            await _contactTypeService.UpdatContactType(contactTypeId, contactType);
 
         /// <summary>
         /// Delete Contact Type by its identification.

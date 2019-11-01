@@ -50,7 +50,7 @@ namespace Phonebook.Controllers
         /// <returns></returns>
         [HttpPut("{userId:int}")]
         public async Task<bool> PutUser(int userId, User user) =>
-            await _userService.UpdateUser(user);
+            await _userService.UpdateUser(userId, user);
 
         /// <summary>
         /// Delete User by its identification.

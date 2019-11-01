@@ -11,7 +11,7 @@ namespace Phonebook.Services.ContactType
 
         Task<bool> CreateContactType(Models.ContactType contactType);
 
-        Task<bool> UpdatContactType(Models.ContactType contactType);
+        Task<bool> UpdatContactType(int contactTypeId, Models.ContactType contactType);
 
         Task<bool> DeleteContactType(int contactTypeId);
     }

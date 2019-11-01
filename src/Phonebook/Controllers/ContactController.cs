@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using Phonebook.Extensions;
 using Phonebook.Models;
 using Phonebook.Services.Contact;
 using System.Collections.Generic;
@@ -40,8 +41,11 @@ namespace Phonebook.Controllers
         /// <param name="contact">Contact data</param>
         /// <returns></returns>
         [HttpPost]
-        public async Task<ActionResult<bool>> PostContact(Contact contact) =>
-            Created(nameof(Contact), await _contactService.CreateContact(contact));
+        public async Task<ActionResult<bool>> PostContact(Contact contact)
+        {
+            if (!ModelState.IsValid) return BadRequest(ModelState.GetErrorMessages());
+            return Created(nameof(Contact), await _contactService.CreateContact(contact));
+        }
 
         /// <summary>
         /// Update an existing Contact.
@@ -51,7 +55,7 @@ namespace Phonebook.Controllers
         /// <returns></returns>
         [HttpPut("{contactId:int}")]
         public async Task<bool> PutContact(int contactId, Contact contact) =>
-            await _contactService.UpdateContact(contact);
+            await _contactService.UpdateContact(contactId, contact);
 
         /// <summary>
         /// Delete Contact by its identification.

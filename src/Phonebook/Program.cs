@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore;
+using Microsoft.Extensions.Logging;
 using Microsoft.AspNetCore.Hosting;
 
 namespace Phonebook
@@ -15,6 +16,11 @@ namespace Phonebook
                 .UseKestrel()
                 .UseIISIntegration()
                 .UseStartup<Startup>()
+                .ConfigureLogging(logging =>
+                {
+                    logging.ClearProviders();
+                    logging.AddConsole();
+                })
                 .ConfigureKestrel((context, options) =>
                 {
                     options.Limits.MaxConcurrentConnections = 10;
