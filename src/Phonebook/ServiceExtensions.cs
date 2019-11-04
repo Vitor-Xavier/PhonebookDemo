@@ -1,4 +1,5 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
+using Microsoft.OpenApi.Models;
 using Phonebook.Services.Contact;
 using Phonebook.Services.ContactType;
 using Phonebook.Services.Person;
@@ -27,15 +28,20 @@ namespace Phonebook
         {
             services.AddSwaggerGen(c =>
             {
-                c.SwaggerDoc("v1", new Swashbuckle.AspNetCore.Swagger.Info
+                c.SwaggerDoc("v1", new OpenApiInfo
                 {
                     Title = "Phonebook",
                     Version = "v1",
-                    Contact = new Swashbuckle.AspNetCore.Swagger.Contact
+                    Contact = new OpenApiContact
                     {
                         Name = "Vitor Xavier de Souza",
                         Email = "vitorvxs@live.com",
-                        Url = "https://github.com/Vitor-Xavier"
+                        Url = new Uri("https://github.com/Vitor-Xavier")
+                    },
+                    License =  new OpenApiLicense
+                    {
+                        Name = "MIT License",
+                        Url = new Uri("https://opensource.org/licenses/MIT")
                     }
                 });
                 var xmlFile = $"{Assembly.GetExecutingAssembly().GetName().Name}.xml";

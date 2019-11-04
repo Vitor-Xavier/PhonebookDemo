@@ -26,9 +26,10 @@ namespace Phonebook.Controllers
             await _userService.GetUserById(userId);
 
         /// <summary>
-        /// Returns People.
+        /// Returns User.
         /// </summary>
-        /// <returns>List of People</returns>
+        /// <param name="username">Username</param>
+        /// <returns>User</returns>
         [HttpGet("{username}")]
         public async Task<User> GetUserByUsername(string username) =>
             await _userService.GetUserByUsername(username);

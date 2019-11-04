@@ -4,7 +4,7 @@ using Microsoft.AspNetCore.Hosting;
 
 namespace Phonebook
 {
-    public class Program
+    public static class Program
     {
         public static void Main(string[] args)
         {

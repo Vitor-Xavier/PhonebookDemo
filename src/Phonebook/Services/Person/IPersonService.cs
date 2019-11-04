@@ -5,7 +5,7 @@ namespace Phonebook.Services.Person
 {
     public interface IPersonService
     {
-        Task<Models.Person> GetPersonById(int personId);
+        ValueTask<Models.Person> GetPersonById(int personId);
 
         Task<IEnumerable<Models.Person>> GetPeopleByUser(int userId);
 

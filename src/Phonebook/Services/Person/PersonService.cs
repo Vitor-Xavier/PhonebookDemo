@@ -23,7 +23,7 @@ namespace Phonebook.Services.Person
         public async Task<IEnumerable<Models.Person>> GetPeopleByUser(int userId) =>
             await _context.People.Where(p => p.UserId == userId).AsNoTracking().ToListAsync();
 
-        public Task<Models.Person> GetPersonById(int personId) =>
+        public ValueTask<Models.Person> GetPersonById(int personId) =>
             _context.People.FindAsync(personId);
 
         public async Task<bool> CreatePerson(Models.Person person)
@@ -55,7 +55,7 @@ namespace Phonebook.Services.Person
         {
             if (person is null) return false;
             if (string.IsNullOrWhiteSpace(person.Name)) return false;
-            if (person.BirthDate == default(DateTime)) return false;
+            if (person.BirthDate == default) return false;
 
             _logger.LogInformation("Person {0} is valid.", person.Name);
             return true;

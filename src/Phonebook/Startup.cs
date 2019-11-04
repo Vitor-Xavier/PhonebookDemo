@@ -1,12 +1,11 @@
 ﻿using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.ResponseCompression;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.Logging.Console;
 using Phonebook.Context;
 using System.IO.Compression;
 
@@ -21,18 +20,17 @@ namespace Phonebook
 
         public IConfiguration Configuration { get; }
 
-        public static readonly ILoggerFactory loggerFactory = new LoggerFactory(new[] { new ConsoleLoggerProvider((_, __) => true, true) });
+        public static readonly ILoggerFactory loggerFactory = LoggerFactory.Create(builder => { builder.AddConsole(); });
 
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
-
             services.AddDbContext<PhonebookContext>(options =>
                 options.UseLoggerFactory(loggerFactory)
                     .EnableSensitiveDataLogging()
                     .UseSqlServer(Configuration.GetConnectionString("PhonebookDatabase")));
 
+            services.AddControllers();
             services.AddHealthChecks().AddDbContextCheck<PhonebookContext>();
             services.ConfigureScopes();
             services.ConfigureCors();
@@ -45,14 +43,14 @@ namespace Phonebook
                 options.Level = CompressionLevel.Fastest;
             });
 
-            services.AddMvc().AddJsonOptions(options =>
+            services.AddRazorPages().AddJsonOptions(options =>
             {
-                options.SerializerSettings.NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore;
+                options.JsonSerializerOptions.IgnoreNullValues = true;
             });
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, IHostingEnvironment env, ILogger<Startup> logger)
+        public static void Configure(IApplicationBuilder app, IWebHostEnvironment env, ILogger<Startup> logger)
         {
             if (env.IsDevelopment())
             {
@@ -62,6 +60,7 @@ namespace Phonebook
             else
             {
                 // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
+                app.UseExceptionHandler("/Error");
                 app.UseHsts();
             }
 
@@ -73,18 +72,21 @@ namespace Phonebook
 
             app.UseHealthChecks("/health");
 
-            //app.UseHttpsRedirection();
-
             app.UseSwagger();
-
             app.UseSwaggerUI(c =>
             {
                 c.SwaggerEndpoint("/swagger/v1/swagger.json", "Phonebook V1");
                 c.RoutePrefix = string.Empty;
             });
 
-            app.UseHttpsRedirection();
-            app.UseMvc();
+            //app.UseHttpsRedirection();
+            //app.UseAuthorization();
+
+            app.UseRouting();
+            app.UseEndpoints(endpoints =>
+            {
+                endpoints.MapControllers();
+            });
         }
     }
 }
