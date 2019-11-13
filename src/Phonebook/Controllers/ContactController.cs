@@ -1,10 +1,12 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using Phonebook.Common;
 using Phonebook.Extensions;
 using Phonebook.Models;
 using Phonebook.Services.Contact;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
+[assembly: ApiConventionType(typeof(PhonebookApiConventions))]
 namespace Phonebook.Controllers
 {
     [Route("api/[controller]")]
@@ -24,16 +26,16 @@ namespace Phonebook.Controllers
         /// <param name="contactId">Contact identifier</param>
         /// <returns>Contact</returns>
         [HttpGet("{contactId:int}")]
-        public async Task<Contact> FindContactById(int contactId) =>
-            await _contactService.GetContactById(contactId);
+        public ValueTask<Contact> FindContactById(int contactId) =>
+            _contactService.GetContactById(contactId);
 
         /// <summary>
         /// Returns Contacts.
         /// </summary>
         /// <returns>List of Contacts</returns>
         [HttpGet("Person/{personId:int}")]
-        public async Task<IEnumerable<Contact>> GetContactsByPerson(int personId) =>
-            await _contactService.GetContactsByPerson(personId);
+        public IAsyncEnumerable<Contact> GetContactsByPerson(int personId) =>
+            _contactService.GetContactsByPerson(personId);
 
         /// <summary>
         /// Add a new Contact to the Phonebook.
@@ -54,8 +56,8 @@ namespace Phonebook.Controllers
         /// <param name="contact">Contact data</param>
         /// <returns></returns>
         [HttpPut("{contactId:int}")]
-        public async Task<bool> PutContact(int contactId, Contact contact) =>
-            await _contactService.UpdateContact(contactId, contact);
+        public Task<bool> PutContact(int contactId, Contact contact) =>
+            _contactService.UpdateContact(contactId, contact);
 
         /// <summary>
         /// Delete Contact by its identification.
@@ -63,7 +65,7 @@ namespace Phonebook.Controllers
         /// <param name="contactId">Contact identifier</param>
         /// <returns></returns>
         [HttpDelete("{contactId:int}")]
-        public async Task<bool> DeleteContact(int contactId) =>
-            await _contactService.DeleteContact(contactId);
+        public Task<bool> DeleteContact(int contactId) =>
+            _contactService.DeleteContact(contactId);
     }
 }

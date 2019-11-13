@@ -7,7 +7,7 @@ namespace Phonebook.Services.ContactType
     {
         Task<IEnumerable<Models.ContactType>> GetContactTypes();
 
-        Task<Models.ContactType> GetContactTypeById(int contactTypeId);
+        ValueTask<Models.ContactType> GetContactTypeById(int contactTypeId);
 
         Task<bool> CreateContactType(Models.ContactType contactType);
 

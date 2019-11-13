@@ -19,11 +19,11 @@ namespace Phonebook.Services.Contact
             _context = context;
         }
 
-        public Task<Models.Contact> GetContactById(int contactId) =>
-            _context.Contacts.AsNoTracking().SingleOrDefaultAsync(c => c.ContactId.Equals(contactId));
+        public async ValueTask<Models.Contact> GetContactById(int contactId) =>
+            await _context.Contacts.AsNoTracking().SingleOrDefaultAsync(c => c.ContactId.Equals(contactId));
 
-        public async Task<IEnumerable<Models.Contact>> GetContactsByPerson(int personId) =>
-            await _context.Contacts.AsNoTracking().Where(c => c.PersonId == personId).AsNoTracking().ToListAsync();
+        public IAsyncEnumerable<Models.Contact> GetContactsByPerson(int personId) =>
+            _context.Contacts.AsNoTracking().Where(c => c.PersonId == personId).AsNoTracking().AsAsyncEnumerable();
 
         public async Task<bool> CreateContact(Models.Contact contact)
         {

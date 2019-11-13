@@ -25,16 +25,16 @@ namespace Phonebook.Controllers
         /// <param name="contactTypeId">Contact Type identifier</param>
         /// <returns>Person</returns>
         [HttpGet("{contactTypeId:int}")]
-        public async Task<ContactType> FindContactTypeById(int contactTypeId) =>
-            await _contactTypeService.GetContactTypeById(contactTypeId);
+        public ValueTask<ContactType> FindContactTypeById(int contactTypeId) =>
+            _contactTypeService.GetContactTypeById(contactTypeId);
 
         /// <summary>
         /// Returns Contact Types.
         /// </summary>
         /// <returns>List of Contact Types</returns>
         [HttpGet]
-        public async Task<IEnumerable<ContactType>> GetContactTypes() =>
-            await _contactTypeService.GetContactTypes();
+        public Task<IEnumerable<ContactType>> GetContactTypes() =>
+            _contactTypeService.GetContactTypes();
 
         /// <summary>
         /// Add a new Contact Type to the Phonebook.
@@ -52,8 +52,8 @@ namespace Phonebook.Controllers
         /// <param name="contactType">Contact Type data</param>
         /// <returns></returns>
         [HttpPut("{contactTypeId:int}")]
-        public async Task<bool> PutContactType(int contactTypeId, ContactType contactType) =>
-            await _contactTypeService.UpdatContactType(contactTypeId, contactType);
+        public Task<bool> PutContactType(int contactTypeId, ContactType contactType) =>
+            _contactTypeService.UpdatContactType(contactTypeId, contactType);
 
         /// <summary>
         /// Delete Contact Type by its identification.
@@ -61,7 +61,7 @@ namespace Phonebook.Controllers
         /// <param name="contactTypeId">Contact Type identifier</param>
         /// <returns></returns>
         [HttpDelete("{contactTypeId:int}")]
-        public async Task<bool> DeleteContactType(int contactTypeId) =>
-            await _contactTypeService.DeleteContactType(contactTypeId);
+        public Task<bool> DeleteContactType(int contactTypeId) =>
+            _contactTypeService.DeleteContactType(contactTypeId);
     }
 }

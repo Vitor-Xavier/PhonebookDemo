@@ -7,7 +7,7 @@ namespace Phonebook.Services.Person
     {
         ValueTask<Models.Person> GetPersonById(int personId);
 
-        Task<IEnumerable<Models.Person>> GetPeopleByUser(int userId);
+        IAsyncEnumerable<Models.Person> GetPeopleByUser(int userId);
 
         Task<bool> CreatePerson(Models.Person person);
 

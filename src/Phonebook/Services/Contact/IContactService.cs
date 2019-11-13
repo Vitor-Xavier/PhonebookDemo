@@ -5,9 +5,9 @@ namespace Phonebook.Services.Contact
 {
     public interface IContactService
     {
-        Task<Models.Contact> GetContactById(int contactId);
+        ValueTask<Models.Contact> GetContactById(int contactId);
 
-        Task<IEnumerable<Models.Contact>> GetContactsByPerson(int personId);
+        IAsyncEnumerable<Models.Contact> GetContactsByPerson(int personId);
 
         Task<bool> CreateContact(Models.Contact contact);
 

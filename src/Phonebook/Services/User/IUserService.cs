@@ -4,7 +4,7 @@ namespace Phonebook.Services.User
 {
     public interface IUserService
     {
-        Task<Models.User> GetUserById(int userId);
+        ValueTask<Models.User> GetUserById(int userId);
 
         Task<Models.User> GetUserByUsername(string username);
 

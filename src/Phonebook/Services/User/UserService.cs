@@ -17,8 +17,8 @@ namespace Phonebook.Services.User
             _context = context;
         }
 
-        public async Task<Models.User> GetUserById(int userId) =>
-            await _context.Users.AsNoTracking().SingleOrDefaultAsync(u => u.UserId == userId);
+        public ValueTask<Models.User> GetUserById(int userId) =>
+            _context.Users.FindAsync(userId);
 
         public async Task<Models.User> GetUserByUsername(string username) =>
             await _context.Users.AsNoTracking().SingleOrDefaultAsync(u => u.Username.Equals(username));

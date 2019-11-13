@@ -1,8 +1,10 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using Phonebook.Common;
 using Phonebook.Models;
 using Phonebook.Services.User;
 using System.Threading.Tasks;
 
+[assembly: ApiConventionType(typeof(PhonebookApiConventions))]
 namespace Phonebook.Controllers
 {
     [Route("api/[controller]")]
@@ -22,8 +24,8 @@ namespace Phonebook.Controllers
         /// <param name="userId">User identifier</param>
         /// <returns>User</returns>
         [HttpGet("{userId:int}")]
-        public async Task<User> FindUserById(int userId) =>
-            await _userService.GetUserById(userId);
+        public ValueTask<User> FindUserById(int userId) =>
+            _userService.GetUserById(userId);
 
         /// <summary>
         /// Returns User.
@@ -31,8 +33,8 @@ namespace Phonebook.Controllers
         /// <param name="username">Username</param>
         /// <returns>User</returns>
         [HttpGet("{username}")]
-        public async Task<User> GetUserByUsername(string username) =>
-            await _userService.GetUserByUsername(username);
+        public Task<User> GetUserByUsername(string username) =>
+            _userService.GetUserByUsername(username);
 
         /// <summary>
         /// Add a new User to the Phonebook.
@@ -50,8 +52,8 @@ namespace Phonebook.Controllers
         /// <param name="user">User data</param>
         /// <returns></returns>
         [HttpPut("{userId:int}")]
-        public async Task<bool> PutUser(int userId, User user) =>
-            await _userService.UpdateUser(userId, user);
+        public Task<bool> PutUser(int userId, User user) =>
+            _userService.UpdateUser(userId, user);
 
         /// <summary>
         /// Delete User by its identification.
@@ -59,7 +61,7 @@ namespace Phonebook.Controllers
         /// <param name="userId">User identifier</param>
         /// <returns></returns>
         [HttpDelete("{userId:int}")]
-        public async Task<bool> DeleteUser(int userId) =>
-            await _userService.DeleteUser(userId);
+        public Task<bool> DeleteUser(int userId) =>
+            _userService.DeleteUser(userId);
     }
 }
