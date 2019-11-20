@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using Phonebook.Common;
 using Phonebook.Models;
 using Phonebook.Services.User;
@@ -7,6 +8,7 @@ using System.Threading.Tasks;
 [assembly: ApiConventionType(typeof(PhonebookApiConventions))]
 namespace Phonebook.Controllers
 {
+    [Authorize]
     [Route("api/[controller]")]
     [ApiController]
     public class UserController : ControllerBase
@@ -26,6 +28,16 @@ namespace Phonebook.Controllers
         [HttpGet("{userId:int}")]
         public ValueTask<User> FindUserById(int userId) =>
             _userService.GetUserById(userId);
+
+        [HttpPost("Authenticate")]
+        [AllowAnonymous]
+        public async Task<IActionResult> Authenticate(AuthenticateModel authenticateModel)
+        {
+            if (await _userService.Authenticate(authenticateModel.Username, authenticateModel.Password) is User user)
+                return Ok(user);
+            else
+                return BadRequest(new { message = "Username or password is incorrect" });
+        }
 
         /// <summary>
         /// Returns User.

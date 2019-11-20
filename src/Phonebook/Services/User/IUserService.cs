@@ -8,6 +8,8 @@ namespace Phonebook.Services.User
 
         Task<Models.User> GetUserByUsername(string username);
 
+        ValueTask<Models.User> Authenticate(string username, string password);
+
         Task<bool> CreateUser(Models.User user);
 
         Task<bool> UpdateUser(int userId, Models.User user);

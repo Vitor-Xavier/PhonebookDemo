@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Phonebook.Models
 {
@@ -21,6 +22,9 @@ namespace Phonebook.Models
         public string Password { get; set; }
 
         public string AvatarSource { get; set; }
+        
+        [NotMapped]
+        public string Token { get; set; }
 
         public virtual ICollection<Person> People { get; set; }
 

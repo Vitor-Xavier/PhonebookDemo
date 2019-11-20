@@ -35,11 +35,13 @@ namespace Phonebook
             services.ConfigureScopes();
             services.ConfigureCors();
             services.ConfigureSwagger();
+            services.ConfigureAuthentication(Configuration);
             services.AddMemoryCache();
 
             services.AddResponseCompression();
 
-            services.Configure<GzipCompressionProviderOptions>(options => {
+            services.Configure<GzipCompressionProviderOptions>(options =>
+            {
                 options.Level = CompressionLevel.Fastest;
             });
 
@@ -78,11 +80,12 @@ namespace Phonebook
                 c.SwaggerEndpoint("/swagger/v1/swagger.json", "Phonebook V1");
                 c.RoutePrefix = string.Empty;
             });
-
-            //app.UseHttpsRedirection();
-            //app.UseAuthorization();
-
             app.UseRouting();
+
+            app.UseAuthentication();
+            app.UseAuthorization();
+            //app.UseHttpsRedirection();
+
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapControllers();
