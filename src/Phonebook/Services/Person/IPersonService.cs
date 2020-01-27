@@ -7,12 +7,12 @@ namespace Phonebook.Services.Person
     {
         ValueTask<Models.Person> GetPersonById(int personId);
 
-        IAsyncEnumerable<Models.Person> GetPeopleByUser(int userId);
+        Task<List<Models.Person>> GetPeopleByUser(int userId);
 
-        Task<bool> CreatePerson(Models.Person person);
+        Task CreatePerson(Models.Person person);
 
-        Task<bool> UpdatePerson(int personId, Models.Person person);
+        Task UpdatePerson(int personId, Models.Person person);
 
-        Task<bool> DeletePerson(int personId);
+        Task DeletePerson(int personId);
     }
 }

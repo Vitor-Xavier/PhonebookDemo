@@ -9,10 +9,10 @@ namespace Phonebook.Services.ContactType
 
         ValueTask<Models.ContactType> GetContactTypeById(int contactTypeId);
 
-        Task<bool> CreateContactType(Models.ContactType contactType);
+        Task CreateContactType(Models.ContactType contactType);
 
-        Task<bool> UpdatContactType(int contactTypeId, Models.ContactType contactType);
+        Task UpdatContactType(int contactTypeId, Models.ContactType contactType);
 
-        Task<bool> DeleteContactType(int contactTypeId);
+        Task DeleteContactType(int contactTypeId);
     }
 }

@@ -54,8 +54,11 @@ namespace Phonebook.Controllers
         /// <param name="user">User data</param>
         /// <returns></returns>
         [HttpPost]
-        public async Task<ActionResult<bool>> PostUser(User user) =>
-            Created(nameof(Models.User), await _userService.CreateUser(user));
+        public async Task<ActionResult<User>> PostUser(User user)
+        {
+            await _userService.CreateUser(user);
+            return Created(nameof(Models.User), user);
+        }
 
         /// <summary>
         /// Update an existing User.
@@ -64,8 +67,11 @@ namespace Phonebook.Controllers
         /// <param name="user">User data</param>
         /// <returns></returns>
         [HttpPut("{userId:int}")]
-        public Task<bool> PutUser(int userId, User user) =>
-            _userService.UpdateUser(userId, user);
+        public async Task<ActionResult<User>> PutUser(int userId, User user)
+        {
+            await _userService.UpdateUser(userId, user);
+            return Ok(user);
+        }
 
         /// <summary>
         /// Delete User by its identification.
@@ -73,7 +79,7 @@ namespace Phonebook.Controllers
         /// <param name="userId">User identifier</param>
         /// <returns></returns>
         [HttpDelete("{userId:int}")]
-        public Task<bool> DeleteUser(int userId) =>
-            _userService.DeleteUser(userId);
+        public async Task DeleteUser(int userId) =>
+            await _userService.DeleteUser(userId);
     }
 }

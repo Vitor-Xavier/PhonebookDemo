@@ -1,8 +1,7 @@
-﻿using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Caching.Memory;
+﻿using Microsoft.Extensions.Caching.Memory;
 using Microsoft.Extensions.Logging;
 using Phonebook.Common;
-using Phonebook.Context;
+using Phonebook.Repositories.ContactType;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
@@ -13,14 +12,14 @@ namespace Phonebook.Services.ContactType
     {
         private readonly ILogger _logger;
 
-        private readonly PhonebookContext _context;
+        private readonly IContactTypeRepository _contactTypeRepository;
 
         private readonly IMemoryCache _memoryCache;
 
-        public ContactTypeService(ILogger<ContactTypeService> logger, IMemoryCache memoryCache, PhonebookContext context)
+        public ContactTypeService(ILogger<ContactTypeService> logger, IMemoryCache memoryCache, IContactTypeRepository contactTypeRepository)
         {
             _logger = logger;
-            _context = context;
+            _contactTypeRepository = contactTypeRepository;
             _memoryCache = memoryCache;
         }
 
@@ -29,36 +28,32 @@ namespace Phonebook.Services.ContactType
             {
                 entry.AbsoluteExpirationRelativeToNow = TimeSpan.FromHours(2);
                 entry.SlidingExpiration = TimeSpan.FromMinutes(30);
-                return _context.ContactTypes.AsNoTracking().ToListAsync();
+                return _contactTypeRepository.GetAllReadOnly();
             });
 
         public async ValueTask<Models.ContactType> GetContactTypeById(int contactTypeId) =>
-            await _context.ContactTypes.AsNoTracking().SingleOrDefaultAsync(c => c.ContactTypeId.Equals(contactTypeId));
+            await _contactTypeRepository.GetById(contactTypeId);
 
-        public async Task<bool> CreateContactType(Models.ContactType contactType)
+        public async Task CreateContactType(Models.ContactType contactType)
         {
-            if (!IsValid(contactType)) return false;
+            if (!IsValid(contactType)) return;
 
-            _context.ContactTypes.Add(contactType);
-            return (await _context.SaveChangesAsync() == 1);
+            await _contactTypeRepository.Add(contactType);
         }
 
-        public async Task<bool> UpdatContactType(int contactTypeId, Models.ContactType contactType)
+        public async Task UpdatContactType(int contactTypeId, Models.ContactType contactType)
         {
-            if (!IsValid(contactType)) return false;
+            if (!IsValid(contactType)) return;
             contactType.ContactTypeId = contactTypeId;
 
-            _context.ContactTypes.Attach(contactType);
-            _context.Entry(contactType).State = EntityState.Modified;
-            return (await _context.SaveChangesAsync() == 1);
+            await _contactTypeRepository.Edit(contactType);
         }
 
-        public async Task<bool> DeleteContactType(int contactTypeId)
+        public async Task DeleteContactType(int contactTypeId)
         {
             var contactType = new Models.ContactType { ContactTypeId = contactTypeId, Deleted = true };
-            _context.ContactTypes.Attach(contactType);
-            _context.Entry(contactType).Property(c => c.Deleted).IsModified = true;
-            return await _context.SaveChangesAsync() == 1;
+
+            await _contactTypeRepository.Delete(contactType);
         }
 
         public bool IsValid(Models.ContactType contactType)

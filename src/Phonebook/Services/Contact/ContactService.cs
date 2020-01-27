@@ -1,8 +1,6 @@
-﻿using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Logging;
-using Phonebook.Context;
+﻿using Microsoft.Extensions.Logging;
+using Phonebook.Repositories.Contact;
 using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 
 namespace Phonebook.Services.Contact
@@ -11,45 +9,42 @@ namespace Phonebook.Services.Contact
     {
         private readonly ILogger _logger;
 
-        private readonly PhonebookContext _context;
+        private readonly IContactRepository _contactRepository;
 
-        public ContactService(ILogger<ContactService> logger, PhonebookContext context)
+        public ContactService(ILogger<ContactService> logger, IContactRepository contactRepository)
         {
             _logger = logger;
-            _context = context;
+            _contactRepository = contactRepository;
         }
 
         public async ValueTask<Models.Contact> GetContactById(int contactId) =>
-            await _context.Contacts.AsNoTracking().SingleOrDefaultAsync(c => c.ContactId.Equals(contactId));
+            await _contactRepository.GetById(contactId);
 
         public IAsyncEnumerable<Models.Contact> GetContactsByPerson(int personId) =>
-            _context.Contacts.AsNoTracking().Where(c => c.PersonId == personId).AsNoTracking().AsAsyncEnumerable();
+            _contactRepository.GetContactsByPerson(personId);
 
-        public async Task<bool> CreateContact(Models.Contact contact)
+        public async Task CreateContact(Models.Contact contact)
         {
-            if (!IsValid(contact)) return false;
+            if (!IsValid(contact)) return;
 
-            _context.Contacts.Add(contact);
-            return (await _context.SaveChangesAsync() == 1);
+            await _contactRepository.Add(contact);
         }
 
-        public async Task<bool> UpdateContact(int contatactId, Models.Contact contact)
+        public async Task UpdateContact(int contatactId, Models.Contact contact)
         {
-            if (!IsValid(contact)) return false;
+            if (!IsValid(contact)) return;
             contact.ContactId = contatactId;
 
-            _context.Contacts.Attach(contact);
-            _context.Entry(contact).State = EntityState.Modified;
-            return (await _context.SaveChangesAsync() == 1);
+            await _contactRepository.Edit(contact);
         }
 
-        public async Task<bool> DeleteContact(int contatactId)
+        public async Task DeleteContact(int contatactId)
         {
             var contact = new Models.Contact { ContactId = contatactId, Deleted = true };
-            _context.Contacts.Attach(contact);
-            _context.Entry(contact).Property(c => c.Deleted).IsModified = true;
-            return await _context.SaveChangesAsync() == 1;
+
+            await _contactRepository.Delete(contact);
         }
+
         public bool IsValid(Models.Contact contact)
         {
             if (contact is null) return false;

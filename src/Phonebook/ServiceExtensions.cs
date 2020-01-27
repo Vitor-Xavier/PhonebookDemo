@@ -4,6 +4,10 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using Phonebook.Common;
+using Phonebook.Repositories.Contact;
+using Phonebook.Repositories.ContactType;
+using Phonebook.Repositories.Person;
+using Phonebook.Repositories.User;
 using Phonebook.Services.Contact;
 using Phonebook.Services.ContactType;
 using Phonebook.Services.Person;
@@ -88,6 +92,11 @@ namespace Phonebook
             services.AddScoped<IPersonService, PersonService>();
             services.AddScoped<IContactService, ContactService>();
             services.AddScoped<IContactTypeService, ContactTypeService>();
+
+            services.AddScoped<IContactRepository, ContactRepository>();
+            services.AddScoped<IContactTypeRepository, ContactTypeRepository>();
+            services.AddScoped<IPersonRepository, PersonRepository>();
+            services.AddScoped<IUserRepository, UserRepository>();
         }
     }
 }

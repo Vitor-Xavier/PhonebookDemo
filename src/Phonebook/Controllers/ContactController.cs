@@ -46,7 +46,8 @@ namespace Phonebook.Controllers
         public async Task<ActionResult<bool>> PostContact(Contact contact)
         {
             if (!ModelState.IsValid) return BadRequest(ModelState.GetErrorMessages());
-            return Created(nameof(Contact), await _contactService.CreateContact(contact));
+            await _contactService.CreateContact(contact);
+            return Created(nameof(Contact), contact);
         }
 
         /// <summary>
@@ -56,7 +57,7 @@ namespace Phonebook.Controllers
         /// <param name="contact">Contact data</param>
         /// <returns></returns>
         [HttpPut("{contactId:int}")]
-        public Task<bool> PutContact(int contactId, Contact contact) =>
+        public Task PutContact(int contactId, Contact contact) =>
             _contactService.UpdateContact(contactId, contact);
 
         /// <summary>
@@ -65,7 +66,7 @@ namespace Phonebook.Controllers
         /// <param name="contactId">Contact identifier</param>
         /// <returns></returns>
         [HttpDelete("{contactId:int}")]
-        public Task<bool> DeleteContact(int contactId) =>
+        public Task DeleteContact(int contactId) =>
             _contactService.DeleteContact(contactId);
     }
 }

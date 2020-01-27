@@ -1,6 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using Phonebook.Context;
+using Phonebook.Repositories.Person;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -11,43 +12,40 @@ namespace Phonebook.Services.Person
     {
         private readonly ILogger _logger;
 
-        private readonly PhonebookContext _context;
+        private readonly IPersonRepository _personRepository;
 
-        public PersonService(ILogger<PersonService> logger, PhonebookContext context)
+        public PersonService(ILogger<PersonService> logger, IPersonRepository personRepository)
         {
             _logger = logger;
-            _context = context;
+            _personRepository = personRepository;
         }
 
-        public IAsyncEnumerable<Models.Person> GetPeopleByUser(int userId) =>
-            _context.People.Where(p => p.UserId == userId).AsNoTracking().AsAsyncEnumerable();
+        public Task<List<Models.Person>> GetPeopleByUser(int userId) =>
+            _personRepository.GetPeopleByUser(userId);
 
         public ValueTask<Models.Person> GetPersonById(int personId) =>
-            _context.People.FindAsync(personId);
+            _personRepository.GetById(personId);
 
-        public async Task<bool> CreatePerson(Models.Person person)
+        public async Task CreatePerson(Models.Person person)
         {
-            if (!IsValid(person)) return false;
+            if (!IsValid(person)) return;
 
-            _context.People.Add(person);
-            return await _context.SaveChangesAsync() == 1;
+            await _personRepository.Add(person);
         }
 
-        public async Task<bool> UpdatePerson(int personId, Models.Person person)
+        public async Task UpdatePerson(int personId, Models.Person person)
         {
-            if (!IsValid(person)) return false;
+            if (!IsValid(person)) return;
             person.PersonId = personId;
 
-            _context.People.Attach(person);
-            _context.Entry(person).State = EntityState.Modified;
-            return await _context.SaveChangesAsync() == 1;
+            await _personRepository.Edit(person);
         }
 
-        public async Task<bool> DeletePerson(int personId)
+        public async Task DeletePerson(int personId)
         {
             var person = new Models.Person { PersonId = personId, Deleted = true };
-            _context.People.Attach(person);
-            return await _context.SaveChangesAsync() == 1;
+
+            await _personRepository.Delete(person);
         }
 
         public bool IsValid(Models.Person person)

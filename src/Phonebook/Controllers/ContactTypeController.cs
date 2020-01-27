@@ -42,8 +42,11 @@ namespace Phonebook.Controllers
         /// <param name="contactType">Contact Type data</param>
         /// <returns></returns>
         [HttpPost]
-        public async Task<ActionResult<bool>> PostContactType(ContactType contactType) =>
-            Created(nameof(ContactType), await _contactTypeService.CreateContactType(contactType));
+        public async Task<ActionResult<bool>> PostContactType(ContactType contactType)
+        {
+            await _contactTypeService.CreateContactType(contactType);
+            return Created(nameof(ContactType), contactType);
+        }
 
         /// <summary>
         /// Update an existing Contact Type.
@@ -52,7 +55,7 @@ namespace Phonebook.Controllers
         /// <param name="contactType">Contact Type data</param>
         /// <returns></returns>
         [HttpPut("{contactTypeId:int}")]
-        public Task<bool> PutContactType(int contactTypeId, ContactType contactType) =>
+        public Task PutContactType(int contactTypeId, ContactType contactType) =>
             _contactTypeService.UpdatContactType(contactTypeId, contactType);
 
         /// <summary>
@@ -61,7 +64,7 @@ namespace Phonebook.Controllers
         /// <param name="contactTypeId">Contact Type identifier</param>
         /// <returns></returns>
         [HttpDelete("{contactTypeId:int}")]
-        public Task<bool> DeleteContactType(int contactTypeId) =>
+        public Task DeleteContactType(int contactTypeId) =>
             _contactTypeService.DeleteContactType(contactTypeId);
     }
 }
