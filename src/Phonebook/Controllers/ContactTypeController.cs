@@ -14,10 +14,8 @@ namespace Phonebook.Controllers
     {
         private readonly IContactTypeService _contactTypeService;
 
-        public ContactTypeController(IContactTypeService contactTypeService)
-        {
+        public ContactTypeController(IContactTypeService contactTypeService) =>
             _contactTypeService = contactTypeService;
-        }
 
         /// <summary>
         /// Find a Contact Type by its identification.
@@ -40,9 +38,9 @@ namespace Phonebook.Controllers
         /// Add a new Contact Type to the Phonebook.
         /// </summary>
         /// <param name="contactType">Contact Type data</param>
-        /// <returns></returns>
+        /// <returns>Created Contact Type</returns>
         [HttpPost]
-        public async Task<ActionResult<bool>> PostContactType(ContactType contactType)
+        public async Task<ActionResult<ContactType>> PostContactType(ContactType contactType)
         {
             await _contactTypeService.CreateContactType(contactType);
             return Created(nameof(ContactType), contactType);
@@ -53,10 +51,13 @@ namespace Phonebook.Controllers
         /// </summary>
         /// <param name="contactTypeId">Contact Type identifier</param>
         /// <param name="contactType">Contact Type data</param>
-        /// <returns></returns>
+        /// <returns>Updated Contact Type</returns>
         [HttpPut("{contactTypeId:int}")]
-        public Task PutContactType(int contactTypeId, ContactType contactType) =>
-            _contactTypeService.UpdatContactType(contactTypeId, contactType);
+        public async Task<ActionResult<ContactType>> PutContactType(int contactTypeId, ContactType contactType)
+        {
+            await _contactTypeService.UpdatContactType(contactTypeId, contactType);
+            return Ok(contactType);
+        }
 
         /// <summary>
         /// Delete Contact Type by its identification.

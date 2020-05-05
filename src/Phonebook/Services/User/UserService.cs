@@ -4,6 +4,7 @@ using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using Phonebook.Common;
 using Phonebook.Context;
+using Phonebook.Exceptions;
 using System;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
@@ -52,7 +53,7 @@ namespace Phonebook.Services.User
 
                 return user;
             }
-            return null;
+            throw new NotFoundException("Username or password is incorrect");
         }
 
         public async Task<bool> CreateUser(Models.User user)

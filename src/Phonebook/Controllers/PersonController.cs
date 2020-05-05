@@ -14,10 +14,8 @@ namespace Phonebook.Controllers
     {
         private readonly IPersonService _personService;
 
-        public PersonController(IPersonService personService)
-        {
+        public PersonController(IPersonService personService) =>
             _personService = personService;
-        }
 
         /// <summary>
         /// Find a Person by its identification.
@@ -40,7 +38,7 @@ namespace Phonebook.Controllers
         /// Add a new Person to the Phonebook.
         /// </summary>
         /// <param name="person">Person data</param>
-        /// <returns></returns>
+        /// <returns>Created Person</returns>
         [HttpPost]
         public async Task<ActionResult<Person>> PostPerson(Person person)
         {
@@ -53,7 +51,7 @@ namespace Phonebook.Controllers
         /// </summary>
         /// <param name="personId">Person identifier</param>
         /// <param name="person">Person data</param>
-        /// <returns></returns>
+        /// <returns>Updated Person</returns>
         [HttpPut("{personId:int}")]
         public async Task<ActionResult<Person>> PutPerson(int personId, Person person)
         {

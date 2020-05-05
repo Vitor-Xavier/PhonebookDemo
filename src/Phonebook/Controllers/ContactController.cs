@@ -15,10 +15,8 @@ namespace Phonebook.Controllers
     {
         private readonly IContactService _contactService;
 
-        public ContactController(IContactService contactService)
-        {
+        public ContactController(IContactService contactService) =>
             _contactService = contactService;
-        }
 
         /// <summary>
         /// Find a Contact by its identification.
@@ -41,9 +39,9 @@ namespace Phonebook.Controllers
         /// Add a new Contact to the Phonebook.
         /// </summary>
         /// <param name="contact">Contact data</param>
-        /// <returns></returns>
+        /// <returns>Created contact</returns>
         [HttpPost]
-        public async Task<ActionResult<bool>> PostContact(Contact contact)
+        public async Task<ActionResult<Contact>> PostContact(Contact contact)
         {
             if (!ModelState.IsValid) return BadRequest(ModelState.GetErrorMessages());
             await _contactService.CreateContact(contact);
@@ -55,10 +53,13 @@ namespace Phonebook.Controllers
         /// </summary>
         /// <param name="contactId">Contact identifier</param>
         /// <param name="contact">Contact data</param>
-        /// <returns></returns>
+        /// <returns>Updated contact</returns>
         [HttpPut("{contactId:int}")]
-        public Task PutContact(int contactId, Contact contact) =>
-            _contactService.UpdateContact(contactId, contact);
+        public async Task<ActionResult<Contact>> PutContact(int contactId, Contact contact) 
+        {
+            await _contactService.UpdateContact(contactId, contact);
+            return Ok(contact);
+        }
 
         /// <summary>
         /// Delete Contact by its identification.
