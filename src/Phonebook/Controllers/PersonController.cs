@@ -65,7 +65,10 @@ namespace Phonebook.Controllers
         /// <param name="personId">Person identifier</param>
         /// <returns></returns>
         [HttpDelete("{personId:int}")]
-        public Task DeletePerson(int personId) =>
-             _personService.DeletePerson(personId);
+        public async Task<ActionResult> DeletePerson(int personId)
+        {
+            await _personService.DeletePerson(personId);
+            return NoContent();
+        }
     }
 }

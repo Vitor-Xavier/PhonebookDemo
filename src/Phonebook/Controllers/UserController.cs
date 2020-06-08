@@ -8,7 +8,6 @@ using System.Threading.Tasks;
 [assembly: ApiConventionType(typeof(PhonebookApiConventions))]
 namespace Phonebook.Controllers
 {
-    [Authorize]
     [Route("api/[controller]")]
     [ApiController]
     public class UserController : ControllerBase
@@ -52,6 +51,7 @@ namespace Phonebook.Controllers
         /// <param name="user">User data</param>
         /// <returns>Created user</returns>
         [HttpPost]
+        [AllowAnonymous]
         public async Task<ActionResult<User>> PostUser(User user)
         {
             await _userService.CreateUser(user);
@@ -77,7 +77,10 @@ namespace Phonebook.Controllers
         /// <param name="userId">User identifier</param>
         /// <returns></returns>
         [HttpDelete("{userId:int}")]
-        public async Task DeleteUser(int userId) =>
+        public async Task<ActionResult> DeleteUser(int userId)
+        {
             await _userService.DeleteUser(userId);
+            return NoContent();
+        }
     }
 }
