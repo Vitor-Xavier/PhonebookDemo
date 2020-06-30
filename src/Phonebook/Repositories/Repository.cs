@@ -1,10 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using Phonebook.Context;
 using Phonebook.Models;
-using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Linq.Expressions;
 using System.Threading.Tasks;
 
 namespace Phonebook.Repositories
