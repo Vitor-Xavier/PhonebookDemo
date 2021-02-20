@@ -40,7 +40,7 @@ namespace Phonebook.Services.User
             {
                 var tokenHandler = new JwtSecurityTokenHandler();
                 var key = Encoding.ASCII.GetBytes(_appSettings.Secret);
-                
+
                 var tokenDescriptor = new SecurityTokenDescriptor
                 {
                     Subject = new ClaimsIdentity(new Claim[] { new Claim(ClaimTypes.Name, user.UserId.ToString()) }),
@@ -53,6 +53,7 @@ namespace Phonebook.Services.User
 
                 return user;
             }
+            _logger.LogInformation($"Authentication failed for user '{username}' at {DateTime.Now}");
             throw new NotFoundException("Username or password is incorrect");
         }
 
@@ -76,20 +77,11 @@ namespace Phonebook.Services.User
 
         public async Task<bool> DeleteUser(int userId)
         {
-            var user = new Models.User { UserId = userId, Deleted = true };
+            Models.User user = new() { UserId = userId, Deleted = true };
             _context.Users.Attach(user);
             return await _context.SaveChangesAsync() == 1;
         }
 
-        public bool IsValid(Models.User user)
-        {
-            if (user is null) return false;
-            if (string.IsNullOrWhiteSpace(user.Username)) return false;
-            if (string.IsNullOrWhiteSpace(user.Email)) return false;
-            if (string.IsNullOrWhiteSpace(user.Name)) return false;
-
-            _logger.LogInformation("User {0} is valid.", user.Username);
-            return true;
-        }
+        public bool IsValid(Models.User user) => user is { Username: { Length: > 0 }, Email: { Length: > 0 }, Name: { Length: > 0 } };
     }
 }

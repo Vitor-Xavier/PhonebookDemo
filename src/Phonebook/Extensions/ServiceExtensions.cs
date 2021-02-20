@@ -17,24 +17,21 @@ using System.IO;
 using System.Reflection;
 using System.Text;
 
-namespace Phonebook
+namespace Phonebook.Extensions
 {
     public static class ServiceExtensions
     {
-        public static void ConfigureCors(this IServiceCollection services)
-        {
+        public static void ConfigureCors(this IServiceCollection services) =>
             services.AddCors(options =>
             {
-                options.AddPolicy("CorsPolicy",
-                    builder => builder.AllowAnyOrigin()
+                options.AddPolicy(CommonKeys.CorsPolicy, builder => builder
                     .AllowAnyMethod()
                     .AllowAnyHeader()
+                    .SetIsOriginAllowed(_ => true)
                     .AllowCredentials());
             });
-        }
 
-        public static void ConfigureSwagger(this IServiceCollection services)
-        {
+        public static void ConfigureSwagger(this IServiceCollection services) =>
             services.AddSwaggerGen(c =>
             {
                 c.SwaggerDoc("v1", new OpenApiInfo
@@ -58,7 +55,7 @@ namespace Phonebook
                 c.IncludeXmlComments(xmlPath);
                 c.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
                 {
-                    Description = @"JWT Authorization header using the Bearer scheme. Example: ""Authorization: Bearer { token }""",
+                    Description = @"JWT Authorization header using the Bearer scheme. Example: ""Authorization: Bearer {token}""",
                     Name = "Authorization",
                     In = ParameterLocation.Header,
                     Type = SecuritySchemeType.ApiKey,
@@ -82,7 +79,6 @@ namespace Phonebook
                     }
                 });
             });
-        }
 
         public static void ConfigureAuthentication(this IServiceCollection services, IConfiguration configuration)
         {

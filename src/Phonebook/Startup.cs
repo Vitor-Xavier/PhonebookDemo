@@ -6,7 +6,9 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
+using Phonebook.Common;
 using Phonebook.Context;
+using Phonebook.Extensions;
 using Phonebook.Middlewares;
 using System.IO.Compression;
 
@@ -21,10 +23,9 @@ namespace Phonebook
         public Startup(IConfiguration configuration) =>
             Configuration = configuration;
 
-        // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddDbContext<PhonebookContext>(options =>
+            services.AddDbContextPool<PhonebookContext>(options =>
                 options.UseLoggerFactory(loggerFactory)
                     .EnableSensitiveDataLogging()
                     .UseSqlServer(Configuration.GetConnectionString("PhonebookDatabase")));
@@ -40,10 +41,9 @@ namespace Phonebook
             services.Configure<GzipCompressionProviderOptions>(options => options.Level = CompressionLevel.Fastest);
             services.AddResponseCompression(options => options.Providers.Add<GzipCompressionProvider>());
 
-            services.AddRazorPages().AddJsonOptions(options => options.JsonSerializerOptions.IgnoreNullValues = true);
+            services.AddControllers().AddJsonOptions(options => options.JsonSerializerOptions.IgnoreNullValues = true);
         }
 
-        // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public static void Configure(IApplicationBuilder app, IWebHostEnvironment env, ILogger<Startup> logger)
         {
             if (env.IsDevelopment())
@@ -53,7 +53,6 @@ namespace Phonebook
             }
             else
             {
-                // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
                 app.UseExceptionHandler("/Error");
                 app.UseHsts();
             }
@@ -64,6 +63,7 @@ namespace Phonebook
                 context.Database.EnsureCreated();
             }
 
+            app.UseCors(CommonKeys.CorsPolicy);
             app.UseHealthChecks("/health");
             app.UseResponseCompression();
             app.UseMiddleware(typeof(ErrorHandlingMiddleware));

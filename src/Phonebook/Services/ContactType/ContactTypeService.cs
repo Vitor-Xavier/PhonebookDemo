@@ -1,5 +1,4 @@
 ﻿using Microsoft.Extensions.Caching.Memory;
-using Microsoft.Extensions.Logging;
 using Phonebook.Common;
 using Phonebook.Repositories.ContactType;
 using System;
@@ -10,15 +9,12 @@ namespace Phonebook.Services.ContactType
 {
     public class ContactTypeService : IContactTypeService
     {
-        private readonly ILogger _logger;
-
         private readonly IContactTypeRepository _contactTypeRepository;
 
         private readonly IMemoryCache _memoryCache;
 
-        public ContactTypeService(ILogger<ContactTypeService> logger, IMemoryCache memoryCache, IContactTypeRepository contactTypeRepository)
+        public ContactTypeService(IMemoryCache memoryCache, IContactTypeRepository contactTypeRepository)
         {
-            _logger = logger;
             _contactTypeRepository = contactTypeRepository;
             _memoryCache = memoryCache;
         }
@@ -51,18 +47,11 @@ namespace Phonebook.Services.ContactType
 
         public async Task DeleteContactType(int contactTypeId)
         {
-            var contactType = new Models.ContactType { ContactTypeId = contactTypeId, Deleted = true };
+            Models.ContactType contactType = new() { ContactTypeId = contactTypeId, Deleted = true };
 
             await _contactTypeRepository.Delete(contactType);
         }
 
-        public bool IsValid(Models.ContactType contactType)
-        {
-            if (contactType is null) return false;
-            if (string.IsNullOrWhiteSpace(contactType.Name)) return false;
-
-            _logger.LogInformation("Contact Type {0} is valid.", contactType.Name);
-            return true;
-        }
+        public bool IsValid(Models.ContactType contactType) => contactType is { Name: { Length: > 0 } };
     }
 }

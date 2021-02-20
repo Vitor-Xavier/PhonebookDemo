@@ -1,5 +1,4 @@
-﻿using Microsoft.Extensions.Logging;
-using Phonebook.Repositories.Contact;
+﻿using Phonebook.Repositories.Contact;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
@@ -7,15 +6,9 @@ namespace Phonebook.Services.Contact
 {
     public class ContactService : IContactService
     {
-        private readonly ILogger _logger;
-
         private readonly IContactRepository _contactRepository;
 
-        public ContactService(ILogger<ContactService> logger, IContactRepository contactRepository)
-        {
-            _logger = logger;
-            _contactRepository = contactRepository;
-        }
+        public ContactService(IContactRepository contactRepository) => _contactRepository = contactRepository;
 
         public async ValueTask<Models.Contact> GetContactById(int contactId) =>
             await _contactRepository.GetById(contactId);
@@ -40,20 +33,11 @@ namespace Phonebook.Services.Contact
 
         public async Task DeleteContact(int contatactId)
         {
-            var contact = new Models.Contact { ContactId = contatactId, Deleted = true };
+            Models.Contact contact = new() { ContactId = contatactId, Deleted = true };
 
             await _contactRepository.Delete(contact);
         }
 
-        public bool IsValid(Models.Contact contact)
-        {
-            if (contact is null) return false;
-            if (string.IsNullOrWhiteSpace(contact.Text)) return false;
-            if (contact.PersonId is 0) return false;
-            if (contact.ContactTypeId is 0) return false;
-
-            _logger.LogInformation("Contact {0} is valid.", contact.Text);
-            return true;
-        }
+        public bool IsValid(Models.Contact contact) => contact is { Text: { Length: > 0 }, PersonId: not 0, ContactTypeId: not 0 };
     }
 }

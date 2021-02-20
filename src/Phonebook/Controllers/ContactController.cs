@@ -43,7 +43,6 @@ namespace Phonebook.Controllers
         [HttpPost]
         public async Task<ActionResult<Contact>> PostContact(Contact contact)
         {
-            if (!ModelState.IsValid) return BadRequest(ModelState.GetErrorMessages());
             await _contactService.CreateContact(contact);
             return Created(nameof(Contact), contact);
         }

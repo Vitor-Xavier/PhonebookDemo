@@ -1,24 +1,14 @@
-﻿using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Logging;
-using Phonebook.Context;
-using Phonebook.Repositories.Person;
+﻿using Phonebook.Repositories.Person;
 using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 
 namespace Phonebook.Services.Person
 {
     public class PersonService : IPersonService
     {
-        private readonly ILogger _logger;
-
         private readonly IPersonRepository _personRepository;
 
-        public PersonService(ILogger<PersonService> logger, IPersonRepository personRepository)
-        {
-            _logger = logger;
-            _personRepository = personRepository;
-        }
+        public PersonService(IPersonRepository personRepository) => _personRepository = personRepository;
 
         public Task<List<Models.Person>> GetPeopleByUser(int userId) =>
             _personRepository.GetPeopleByUser(userId);
@@ -43,19 +33,11 @@ namespace Phonebook.Services.Person
 
         public async Task DeletePerson(int personId)
         {
-            var person = new Models.Person { PersonId = personId, Deleted = true };
+            Models.Person person = new() { PersonId = personId, Deleted = true };
 
             await _personRepository.Delete(person);
         }
 
-        public bool IsValid(Models.Person person)
-        {
-            if (person is null) return false;
-            if (string.IsNullOrWhiteSpace(person.Name)) return false;
-            if (person.BirthDate == default) return false;
-
-            _logger.LogInformation("Person {0} is valid.", person.Name);
-            return true;
-        }
+        public bool IsValid(Models.Person person) => person is { Name: { Length: > 0 }, UserId: not 0 };
     }
 }
