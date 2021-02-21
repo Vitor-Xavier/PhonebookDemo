@@ -3,6 +3,7 @@ using Phonebook.Common;
 using Phonebook.Models;
 using Phonebook.Services.ContactType;
 using System.Collections.Generic;
+using System.Threading;
 using System.Threading.Tasks;
 
 [assembly: ApiConventionType(typeof(PhonebookApiConventions))]
@@ -21,28 +22,31 @@ namespace Phonebook.Controllers
         /// Find a Contact Type by its identification.
         /// </summary>
         /// <param name="contactTypeId">Contact Type identifier</param>
+        /// <param name="cancellationToken">Request Cancellation Token</param>
         /// <returns>Person</returns>
         [HttpGet("{contactTypeId:int}")]
-        public ValueTask<ContactType> FindContactTypeById(int contactTypeId) =>
-            _contactTypeService.GetContactTypeById(contactTypeId);
+        public ValueTask<ContactType> FindContactTypeById(int contactTypeId, CancellationToken cancellationToken) =>
+            _contactTypeService.GetContactTypeById(contactTypeId, cancellationToken);
 
         /// <summary>
         /// Returns Contact Types.
         /// </summary>
+        /// <param name="cancellationToken">Request Cancellation Token</param>
         /// <returns>List of Contact Types</returns>
         [HttpGet]
-        public Task<IEnumerable<ContactType>> GetContactTypes() =>
-            _contactTypeService.GetContactTypes();
+        public Task<IEnumerable<ContactType>> GetContactTypes(CancellationToken cancellationToken) =>
+            _contactTypeService.GetContactTypes(cancellationToken);
 
         /// <summary>
         /// Add a new Contact Type to the Phonebook.
         /// </summary>
         /// <param name="contactType">Contact Type data</param>
+        /// <param name="cancellationToken">Request Cancellation Token</param>
         /// <returns>Created Contact Type</returns>
         [HttpPost]
-        public async Task<ActionResult<ContactType>> PostContactType(ContactType contactType)
+        public async Task<ActionResult<ContactType>> PostContactType(ContactType contactType, CancellationToken cancellationToken)
         {
-            await _contactTypeService.CreateContactType(contactType);
+            await _contactTypeService.CreateContactType(contactType, cancellationToken);
             return Created(nameof(ContactType), contactType);
         }
 
@@ -51,11 +55,12 @@ namespace Phonebook.Controllers
         /// </summary>
         /// <param name="contactTypeId">Contact Type identifier</param>
         /// <param name="contactType">Contact Type data</param>
+        /// <param name="cancellationToken">Request Cancellation Token</param>
         /// <returns>Updated Contact Type</returns>
         [HttpPut("{contactTypeId:int}")]
-        public async Task<ActionResult<ContactType>> PutContactType(int contactTypeId, ContactType contactType)
+        public async Task<ActionResult<ContactType>> PutContactType(int contactTypeId, ContactType contactType, CancellationToken cancellationToken)
         {
-            await _contactTypeService.UpdatContactType(contactTypeId, contactType);
+            await _contactTypeService.UpdatContactType(contactTypeId, contactType, cancellationToken);
             return Ok(contactType);
         }
 
@@ -63,11 +68,12 @@ namespace Phonebook.Controllers
         /// Delete Contact Type by its identification.
         /// </summary>
         /// <param name="contactTypeId">Contact Type identifier</param>
+        /// <param name="cancellationToken">Request Cancellation Token</param>
         /// <returns></returns>
         [HttpDelete("{contactTypeId:int}")]
-        public async Task<ActionResult> DeleteContactType(int contactTypeId)
+        public async Task<ActionResult> DeleteContactType(int contactTypeId, CancellationToken cancellationToken)
         {
-            await _contactTypeService.DeleteContactType(contactTypeId);
+            await _contactTypeService.DeleteContactType(contactTypeId, cancellationToken);
             return NoContent();
         }
     }

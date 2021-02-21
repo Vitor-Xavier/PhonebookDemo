@@ -1,8 +1,10 @@
 ﻿using Microsoft.Extensions.Caching.Memory;
 using Phonebook.Common;
+using Phonebook.Exceptions;
 using Phonebook.Repositories.ContactType;
 using System;
 using System.Collections.Generic;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace Phonebook.Services.ContactType
@@ -19,37 +21,37 @@ namespace Phonebook.Services.ContactType
             _memoryCache = memoryCache;
         }
 
-        public async Task<IEnumerable<Models.ContactType>> GetContactTypes() =>
+        public async Task<IEnumerable<Models.ContactType>> GetContactTypes(CancellationToken cancellationToken = default) =>
             await _memoryCache.GetOrCreateAsync(CacheKeys.ContactType, entry =>
             {
                 entry.AbsoluteExpirationRelativeToNow = TimeSpan.FromHours(2);
                 entry.SlidingExpiration = TimeSpan.FromMinutes(30);
-                return _contactTypeRepository.GetAllReadOnly();
+                return _contactTypeRepository.GetAllReadOnly(cancellationToken);
             });
 
-        public async ValueTask<Models.ContactType> GetContactTypeById(int contactTypeId) =>
+        public async ValueTask<Models.ContactType> GetContactTypeById(int contactTypeId, CancellationToken cancellationToken = default) =>
             await _contactTypeRepository.GetById(contactTypeId);
 
-        public async Task CreateContactType(Models.ContactType contactType)
+        public async Task CreateContactType(Models.ContactType contactType, CancellationToken cancellationToken = default)
         {
-            if (!IsValid(contactType)) return;
+            if (!IsValid(contactType)) throw new BadRequestException("Registro inválido");
 
-            await _contactTypeRepository.Add(contactType);
+            await _contactTypeRepository.Add(contactType, cancellationToken);
         }
 
-        public async Task UpdatContactType(int contactTypeId, Models.ContactType contactType)
+        public async Task UpdatContactType(int contactTypeId, Models.ContactType contactType, CancellationToken cancellationToken = default)
         {
-            if (!IsValid(contactType)) return;
+            if (!IsValid(contactType)) throw new BadRequestException("Registro inválido");
             contactType.ContactTypeId = contactTypeId;
 
-            await _contactTypeRepository.Edit(contactType);
+            await _contactTypeRepository.Edit(contactType, cancellationToken);
         }
 
-        public async Task DeleteContactType(int contactTypeId)
+        public async Task DeleteContactType(int contactTypeId, CancellationToken cancellationToken = default)
         {
             Models.ContactType contactType = new() { ContactTypeId = contactTypeId, Deleted = true };
 
-            await _contactTypeRepository.Delete(contactType);
+            await _contactTypeRepository.Delete(contactType, cancellationToken);
         }
 
         public bool IsValid(Models.ContactType contactType) => contactType is { Name: { Length: > 0 } };
