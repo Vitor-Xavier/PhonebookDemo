@@ -1,14 +1,14 @@
-﻿using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Logging;
+﻿using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using Phonebook.Common;
-using Phonebook.Context;
 using Phonebook.Exceptions;
+using Phonebook.Repositories.User;
 using System;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace Phonebook.Services.User
@@ -19,24 +19,24 @@ namespace Phonebook.Services.User
 
         private readonly AppSettings _appSettings;
 
-        private readonly PhonebookContext _context;
+        private readonly IUserRepository _userRepository;
 
-        public UserService(ILogger<UserService> logger, IOptions<AppSettings> appSettings, PhonebookContext context)
+        public UserService(ILogger<UserService> logger, IOptions<AppSettings> appSettings, IUserRepository userRepository)
         {
             _logger = logger;
-            _context = context;
+            _userRepository = userRepository;
             _appSettings = appSettings.Value;
         }
 
-        public ValueTask<Models.User> GetUserById(int userId) =>
-            _context.Users.FindAsync(userId);
+        public ValueTask<Models.User> GetUserById(int userId, CancellationToken cancellationToken = default) =>
+            _userRepository.GetById(userId, cancellationToken);
 
-        public async Task<Models.User> GetUserByUsername(string username) =>
-            await _context.Users.AsNoTracking().SingleOrDefaultAsync(u => u.Username.Equals(username));
+        public async Task<Models.User> GetUserByUsername(string username, CancellationToken cancellationToken = default) =>
+            await _userRepository.GetUserByUsername(username);
 
-        public async ValueTask<Models.User> Authenticate(string username, string password)
+        public async ValueTask<Models.User> Authenticate(string username, string password, CancellationToken cancellationToken = default)
         {
-            if (await _context.Users.SingleOrDefaultAsync(u => u.Username == username && u.Password == password && !u.Deleted) is Models.User user)
+            if (await _userRepository.GetUserByUsernamePassword(username, password) is Models.User user)
             {
                 var tokenHandler = new JwtSecurityTokenHandler();
                 var key = Encoding.ASCII.GetBytes(_appSettings.Secret);
@@ -57,29 +57,26 @@ namespace Phonebook.Services.User
             throw new NotFoundException("Username or password is incorrect");
         }
 
-        public async Task<bool> CreateUser(Models.User user)
+        public async Task CreateUser(Models.User user, CancellationToken cancellationToken = default)
         {
-            if (!IsValid(user)) return false;
+            if (!IsValid(user)) throw new BadRequestException("Registro inválido");
 
-            _context.Users.Add(user);
-            return await _context.SaveChangesAsync() == 1;
+            await _userRepository.Add(user, cancellationToken);
         }
 
-        public async Task<bool> UpdateUser(int userId, Models.User user)
+        public async Task UpdateUser(int userId, Models.User user, CancellationToken cancellationToken = default)
         {
-            if (!IsValid(user)) return false;
+            if (!IsValid(user)) throw new BadRequestException("Registro inválido");
             user.UserId = userId;
 
-            _context.Users.Attach(user);
-            _context.Entry(user).State = EntityState.Modified;
-            return await _context.SaveChangesAsync() == 1;
+            await _userRepository.Edit(user, cancellationToken);
         }
 
-        public async Task<bool> DeleteUser(int userId)
+        public async Task DeleteUser(int userId, CancellationToken cancellationToken = default)
         {
             Models.User user = new() { UserId = userId, Deleted = true };
-            _context.Users.Attach(user);
-            return await _context.SaveChangesAsync() == 1;
+
+            await _userRepository.Delete(user, cancellationToken);
         }
 
         public bool IsValid(Models.User user) => user is { Username: { Length: > 0 }, Email: { Length: > 0 }, Name: { Length: > 0 } };

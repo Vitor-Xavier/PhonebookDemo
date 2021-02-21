@@ -1,19 +1,20 @@
-﻿using System.Threading.Tasks;
+﻿using System.Threading;
+using System.Threading.Tasks;
 
 namespace Phonebook.Services.User
 {
     public interface IUserService
     {
-        ValueTask<Models.User> GetUserById(int userId);
+        ValueTask<Models.User> GetUserById(int userId, CancellationToken cancellationToken = default);
 
-        Task<Models.User> GetUserByUsername(string username);
+        Task<Models.User> GetUserByUsername(string username, CancellationToken cancellationToken = default);
 
-        ValueTask<Models.User> Authenticate(string username, string password);
+        ValueTask<Models.User> Authenticate(string username, string password, CancellationToken cancellationToken = default);
 
-        Task<bool> CreateUser(Models.User user);
+        Task CreateUser(Models.User user, CancellationToken cancellationToken = default);
 
-        Task<bool> UpdateUser(int userId, Models.User user);
+        Task UpdateUser(int userId, Models.User user, CancellationToken cancellationToken = default);
 
-        Task<bool> DeleteUser(int userId);
+        Task DeleteUser(int userId, CancellationToken cancellationToken = default);
     }
 }

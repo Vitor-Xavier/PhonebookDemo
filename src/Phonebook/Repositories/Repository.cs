@@ -1,6 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Phonebook.Models;
 using System.Collections.Generic;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace Phonebook.Repositories
@@ -14,32 +15,32 @@ namespace Phonebook.Repositories
             _context = context;
         }
 
-        public ValueTask<TEntity> GetById(int id) =>
-            _context.Set<TEntity>().FindAsync(id);
+        public ValueTask<TEntity> GetById(int id, CancellationToken cancellationToken = default) =>
+            _context.Set<TEntity>().FindAsync(new object[] { id }, cancellationToken: cancellationToken);
 
         public IAsyncEnumerable<TEntity> GetAllReadOnlyAsEnumerable() =>
             _context.Set<TEntity>().AsNoTracking().AsAsyncEnumerable();
 
-        public Task<List<TEntity>> GetAllReadOnly() =>
-            _context.Set<TEntity>().AsNoTracking().ToListAsync();
+        public Task<List<TEntity>> GetAllReadOnly(CancellationToken cancellationToken = default) =>
+            _context.Set<TEntity>().AsNoTracking().ToListAsync(cancellationToken);
 
-        public async Task Add(TEntity entity)
+        public async Task Add(TEntity entity, CancellationToken cancellationToken = default)
         {
             _context.Set<TEntity>().Add(entity);
-            await _context.SaveChangesAsync();
+            await _context.SaveChangesAsync(cancellationToken);
         }
 
-        public async Task Delete(TEntity entity)
+        public async Task Delete(TEntity entity, CancellationToken cancellationToken = default)
         {
             _context.Set<TEntity>().Attach(entity);
             _context.Entry(entity).Property(c => c.Deleted).IsModified = true;
-            await _context.SaveChangesAsync();
+            await _context.SaveChangesAsync(cancellationToken);
         }
 
-        public async Task Edit(TEntity entity)
+        public async Task Edit(TEntity entity, CancellationToken cancellationToken = default)
         {
             _context.Entry(entity).State = EntityState.Modified;
-            await _context.SaveChangesAsync();
+            await _context.SaveChangesAsync(cancellationToken);
         }
 
     }

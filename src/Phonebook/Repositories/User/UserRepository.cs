@@ -1,7 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Phonebook.Context;
-using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace Phonebook.Repositories.User
@@ -10,7 +10,10 @@ namespace Phonebook.Repositories.User
     {
         public UserRepository(PhonebookContext context) : base(context) { }
 
-        public Task<List<Models.User>> GetUserByUsername(string username) =>
-            _context.Users.Where(user => user.Username == username).AsNoTracking().ToListAsync();
+        public Task<Models.User> GetUserByUsername(string username, CancellationToken cancellationToken = default) =>
+            _context.Users.Where(user => user.Username == username).AsNoTracking().SingleOrDefaultAsync(cancellationToken);
+
+        public Task<Models.User> GetUserByUsernamePassword(string username, string password, CancellationToken cancellationToken = default) =>
+            _context.Users.Where(user => user.Username == username && user.Password == password && !user.Deleted).AsNoTracking().SingleOrDefaultAsync(cancellationToken);
     }
 }
