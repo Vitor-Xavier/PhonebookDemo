@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using System.Text.Json.Serialization;
 
 namespace Phonebook.Models
 {
@@ -26,6 +27,7 @@ namespace Phonebook.Models
         [NotMapped]
         public string Token { get; set; }
 
+        [JsonIgnore]
         public virtual ICollection<Person> People { get; set; }
 
         public override bool Equals(object obj) =>

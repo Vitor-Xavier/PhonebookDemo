@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using System.Text.Json.Serialization;
 
 namespace Phonebook.Models
 {
@@ -15,8 +16,10 @@ namespace Phonebook.Models
 
         public int UserId { get; set; }
 
+        [JsonIgnore]
         public virtual User User { get; set; }
 
+        [JsonIgnore]
         public virtual ICollection<Contact> Contacts { get; set; }
 
         public override bool Equals(object obj) =>

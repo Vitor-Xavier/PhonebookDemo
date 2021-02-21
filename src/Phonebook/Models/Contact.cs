@@ -1,5 +1,6 @@
 ﻿using System;
 using System.ComponentModel.DataAnnotations;
+using System.Text.Json.Serialization;
 
 namespace Phonebook.Models
 {
@@ -12,10 +13,12 @@ namespace Phonebook.Models
 
         public int ContactTypeId { get; set; }
 
+        [JsonIgnore]
         public virtual ContactType ContactType { get; set; }
 
         public int PersonId { get; set; }
 
+        [JsonIgnore]
         public virtual Person Person { get; set; }
 
         public override bool Equals(object obj) =>
