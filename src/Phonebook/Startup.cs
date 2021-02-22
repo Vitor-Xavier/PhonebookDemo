@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.HttpOverrides;
 using Microsoft.AspNetCore.ResponseCompression;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
@@ -71,11 +72,16 @@ namespace Phonebook
             app.UseSwagger();
             app.UseSwaggerUI(c =>
             {
-                c.SwaggerEndpoint("/swagger/v1/swagger.json", "Phonebook V1");
                 c.RoutePrefix = string.Empty;
+                c.SwaggerEndpoint(env.IsDevelopment() ? "/swagger/v1/swagger.json" : "/phonebookserver/swagger/v1/swagger.json", "Phonebook V1");
             });
-            app.UseRouting();
+            
+            app.UseForwardedHeaders(new ForwardedHeadersOptions
+            {
+                ForwardedHeaders = ForwardedHeaders.XForwardedFor | ForwardedHeaders.XForwardedProto
+            });
 
+            app.UseRouting();
             app.UseAuthentication();
             app.UseAuthorization();
             //app.UseHttpsRedirection();

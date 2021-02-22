@@ -6,5 +6,14 @@ services:
     build:
       context: .
       dockerfile: src/Phonebook/Dockerfile
+    expose:
+      - "5000"
+  nginxphonebook:
+    image: nginxphonebook-image
+    build:
+        context: .
+        dockerfile: src/nginx/Dockerfile
+    depends_on:
+      - phonebook
     ports:
-      - 80:5000
+        - "90:80"
