@@ -8,6 +8,8 @@ namespace Phonebook.Repositories.User
     {
         Task<Models.User> GetUserByUsername(string username, CancellationToken cancellationToken = default);
 
+        Task<bool> UsernameIsDefined(string username, CancellationToken cancellationToken = default);
+
         Task<Models.User> GetUserByUsernamePassword(string username, string password, CancellationToken cancellationToken = default);
     }
 }

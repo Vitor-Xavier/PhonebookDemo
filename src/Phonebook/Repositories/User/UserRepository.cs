@@ -13,6 +13,9 @@ namespace Phonebook.Repositories.User
         public Task<Models.User> GetUserByUsername(string username, CancellationToken cancellationToken = default) =>
             _context.Users.Where(user => user.Username == username).AsNoTracking().SingleOrDefaultAsync(cancellationToken);
 
+        public Task<bool> UsernameIsDefined(string username, CancellationToken cancellationToken = default) =>
+            _context.Users.AsNoTracking().AnyAsync(user => user.Username == username, cancellationToken);
+
         public Task<Models.User> GetUserByUsernamePassword(string username, string password, CancellationToken cancellationToken = default) =>
             _context.Users.Where(user => user.Username == username && user.Password == password && !user.Deleted).AsNoTracking().SingleOrDefaultAsync(cancellationToken);
     }

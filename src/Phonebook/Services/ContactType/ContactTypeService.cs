@@ -30,10 +30,11 @@ namespace Phonebook.Services.ContactType
             });
 
         public async ValueTask<Models.ContactType> GetContactTypeById(int contactTypeId, CancellationToken cancellationToken = default) =>
-            await _contactTypeRepository.GetById(contactTypeId);
+            await _contactTypeRepository.GetById(contactTypeId, cancellationToken);
 
         public async Task CreateContactType(Models.ContactType contactType, CancellationToken cancellationToken = default)
         {
+            cancellationToken.ThrowIfCancellationRequested();
             if (!IsValid(contactType)) throw new BadRequestException("Registro inválido");
 
             await _contactTypeRepository.Add(contactType, cancellationToken);
@@ -41,6 +42,7 @@ namespace Phonebook.Services.ContactType
 
         public async Task UpdatContactType(int contactTypeId, Models.ContactType contactType, CancellationToken cancellationToken = default)
         {
+            cancellationToken.ThrowIfCancellationRequested();
             if (!IsValid(contactType)) throw new BadRequestException("Registro inválido");
             contactType.ContactTypeId = contactTypeId;
 
@@ -49,6 +51,7 @@ namespace Phonebook.Services.ContactType
 
         public async Task DeleteContactType(int contactTypeId, CancellationToken cancellationToken = default)
         {
+            cancellationToken.ThrowIfCancellationRequested();
             Models.ContactType contactType = new() { ContactTypeId = contactTypeId, Deleted = true };
 
             await _contactTypeRepository.Delete(contactType, cancellationToken);

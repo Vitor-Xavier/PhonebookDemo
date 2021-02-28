@@ -7,8 +7,7 @@ namespace Phonebook.LoggerExtensions
     {
         private bool _disposed = false;
 
-        public ILogger CreateLogger(string categoryName) =>
-          new CustomLogger();
+        public ILogger CreateLogger(string categoryName) => new CustomLogger();
 
         public void Dispose()
         {

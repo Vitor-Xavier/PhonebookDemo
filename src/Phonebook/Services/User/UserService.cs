@@ -3,6 +3,7 @@ using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using Phonebook.Common;
 using Phonebook.Exceptions;
+using Phonebook.Helpers;
 using Phonebook.Repositories.User;
 using System;
 using System.IdentityModel.Tokens.Jwt;
@@ -32,11 +33,12 @@ namespace Phonebook.Services.User
             _userRepository.GetById(userId, cancellationToken);
 
         public async Task<Models.User> GetUserByUsername(string username, CancellationToken cancellationToken = default) =>
-            await _userRepository.GetUserByUsername(username);
+            await _userRepository.GetUserByUsername(username, cancellationToken);
 
         public async ValueTask<Models.User> Authenticate(string username, string password, CancellationToken cancellationToken = default)
         {
-            if (await _userRepository.GetUserByUsernamePassword(username, password) is Models.User user)
+            cancellationToken.ThrowIfCancellationRequested();
+            if (await _userRepository.GetUserByUsernamePassword(username, password, cancellationToken) is Models.User user)
             {
                 var tokenHandler = new JwtSecurityTokenHandler();
                 var key = Encoding.ASCII.GetBytes(_appSettings.Secret);
@@ -59,26 +61,35 @@ namespace Phonebook.Services.User
 
         public async Task CreateUser(Models.User user, CancellationToken cancellationToken = default)
         {
-            if (!IsValid(user)) throw new BadRequestException("Registro inválido");
+            cancellationToken.ThrowIfCancellationRequested();
+            if (!await IsValid(user, cancellationToken)) throw new BadRequestException("Registro inválido");
+
+            user.Password = EncodingHelper.ComputeSha256Hash(user.Password);
 
             await _userRepository.Add(user, cancellationToken);
         }
 
         public async Task UpdateUser(int userId, Models.User user, CancellationToken cancellationToken = default)
         {
-            if (!IsValid(user)) throw new BadRequestException("Registro inválido");
+            cancellationToken.ThrowIfCancellationRequested();
+            if (!await IsValid(user, cancellationToken)) throw new BadRequestException("Registro inválido");
+
             user.UserId = userId;
+            user.Password = EncodingHelper.ComputeSha256Hash(user.Password);
 
             await _userRepository.Edit(user, cancellationToken);
         }
 
         public async Task DeleteUser(int userId, CancellationToken cancellationToken = default)
         {
+            cancellationToken.ThrowIfCancellationRequested();
             Models.User user = new() { UserId = userId, Deleted = true };
 
             await _userRepository.Delete(user, cancellationToken);
         }
 
-        public bool IsValid(Models.User user) => user is { Username: { Length: > 0 }, Email: { Length: > 0 }, Name: { Length: > 0 } };
+        public async Task<bool> IsValid(Models.User user, CancellationToken cancellationToken = default) =>
+            user is not { Username: { Length: > 0 }, Password: { Length: > 0 }, Email: { Length: > 0 }, Name: { Length: > 0 } } &&
+            (user.UserId is not 0 || !await _userRepository.UsernameIsDefined(user.Username, cancellationToken));
     }
 }

@@ -20,6 +20,7 @@ namespace Phonebook.Services.Contact
 
         public async Task CreateContact(Models.Contact contact, CancellationToken cancellationToken = default)
         {
+            cancellationToken.ThrowIfCancellationRequested();
             if (!IsValid(contact)) throw new BadRequestException("Registro inválido");
 
             await _contactRepository.Add(contact, cancellationToken);
@@ -27,6 +28,7 @@ namespace Phonebook.Services.Contact
 
         public async Task UpdateContact(int contatactId, Models.Contact contact, CancellationToken cancellationToken = default)
         {
+            cancellationToken.ThrowIfCancellationRequested();
             if (!IsValid(contact)) throw new BadRequestException("Registro inválido");
             contact.ContactId = contatactId;
 
@@ -35,6 +37,7 @@ namespace Phonebook.Services.Contact
 
         public async Task DeleteContact(int contatactId, CancellationToken cancellationToken = default)
         {
+            cancellationToken.ThrowIfCancellationRequested();
             Models.Contact contact = new() { ContactId = contatactId, Deleted = true };
 
             await _contactRepository.Delete(contact, cancellationToken);

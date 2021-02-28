@@ -20,6 +20,7 @@ namespace Phonebook.Services.Person
 
         public async Task CreatePerson(Models.Person person, CancellationToken cancellationToken = default)
         {
+            cancellationToken.ThrowIfCancellationRequested();
             if (!IsValid(person)) throw new BadRequestException("Registro inválido");
 
             await _personRepository.Add(person, cancellationToken);
@@ -27,6 +28,7 @@ namespace Phonebook.Services.Person
 
         public async Task UpdatePerson(int personId, Models.Person person, CancellationToken cancellationToken = default)
         {
+            cancellationToken.ThrowIfCancellationRequested();
             if (!IsValid(person)) throw new BadRequestException("Registro inválido");
             person.PersonId = personId;
 
@@ -35,11 +37,12 @@ namespace Phonebook.Services.Person
 
         public async Task DeletePerson(int personId, CancellationToken cancellationToken = default)
         {
+            cancellationToken.ThrowIfCancellationRequested();
             Models.Person person = new() { PersonId = personId, Deleted = true };
 
             await _personRepository.Delete(person, cancellationToken);
         }
 
-        public bool IsValid(Models.Person person) => person is { Name: { Length: > 0 }, UserId: not 0 };
+        public bool IsValid(Models.Person person) => person is { Name: { Length: > 0 }, BirthDate: { Year: > 1900 }, UserId: not 0 };
     }
 }
