@@ -1,9 +1,11 @@
 ﻿using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using Phonebook.Common;
+using Phonebook.Middlewares;
 using Phonebook.Repositories.Contact;
 using Phonebook.Repositories.ContactType;
 using Phonebook.Repositories.Person;
@@ -30,6 +32,9 @@ namespace Phonebook.Extensions
                     .SetIsOriginAllowed(_ => true)
                     .AllowCredentials());
             });
+
+        public static IApplicationBuilder UseRequestMiddleware(this IApplicationBuilder builder) =>
+            builder.UseMiddleware<RequestMiddleware>();
 
         public static void ConfigureSwagger(this IServiceCollection services) =>
             services.AddSwaggerGen(c =>

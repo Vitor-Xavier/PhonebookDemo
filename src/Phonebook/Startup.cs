@@ -11,6 +11,7 @@ using Phonebook.Common;
 using Phonebook.Context;
 using Phonebook.Extensions;
 using Phonebook.Middlewares;
+using Prometheus;
 using System.IO.Compression;
 
 namespace Phonebook
@@ -87,6 +88,8 @@ namespace Phonebook
             });
 
             app.UseRouting();
+            app.UseMetricServer();
+            app.UseRequestMiddleware();
             app.UseAuthentication();
             app.UseAuthorization();
             //app.UseHttpsRedirection();
