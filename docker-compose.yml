@@ -1,5 +1,8 @@
 version: '3.4'
 
+volumes:
+  prometheus-data:
+
 services:
   phonebook:
     image: phonebook-image
@@ -17,12 +20,18 @@ services:
       - phonebook
     ports:
         - "90:80"
-  prometheusphonebook:
+  prometheus:
     image: prometheusphonebook-image
     build:
         context: .
         dockerfile: src/Prometheus/Dockerfile
+    volumes:
+      - prometheus-data:/prometheus
+    command:
+      - --config.file=/etc/prometheus/prometheus.yml
+      - --web.external-url=/prometheus/
+      - --web.route-prefix=/
     depends_on:
       - phonebook
-    ports:
-      - "9090:9090"
+    expose:
+      - "9090"

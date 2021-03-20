@@ -22,3 +22,12 @@ services:
       - phonebook
     ports:
         - "90:80"
+  prometheusphonebook:
+    image: prometheusphonebook-image
+    build:
+        context: .
+        dockerfile: src/Prometheus/Dockerfile
+    depends_on:
+      - phonebook
+    ports:
+      - "9090:9090"

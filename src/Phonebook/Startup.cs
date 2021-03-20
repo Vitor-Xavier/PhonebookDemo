@@ -79,7 +79,7 @@ namespace Phonebook
             app.UseSwaggerUI(c =>
             {
                 c.RoutePrefix = string.Empty;
-                c.SwaggerEndpoint(env.IsDevelopment() ? "/swagger/v1/swagger.json" : "/phonebookserver/swagger/v1/swagger.json", "Phonebook V1");
+                c.SwaggerEndpoint(env.IsDevelopment() ? "/swagger/v1/swagger.json" : "/phonebook/swagger/v1/swagger.json", "Phonebook V1");
             });
 
             app.UseForwardedHeaders(new ForwardedHeadersOptions
