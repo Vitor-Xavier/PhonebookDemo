@@ -2,9 +2,7 @@ scrape_configs:
 - job_name: 'phonebook-prometheus'
   scrape_interval: 15s  
   scrape_timeout: 10s  
-  metrics_path: /phonebook/metrics
-  dns_sd_configs:
-    - names:
-      - 'nginxphonebook'
-      type: 'A'
-      port: 80
+  metrics_path: /metrics
+  static_configs:
+    - targets:
+      - phonebook:5000
