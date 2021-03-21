@@ -7,11 +7,13 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
+using Microsoft.OpenApi.Models;
 using Phonebook.Common;
 using Phonebook.Context;
 using Phonebook.Extensions;
 using Phonebook.Middlewares;
 using Prometheus;
+using System.Collections.Generic;
 using System.IO.Compression;
 
 namespace Phonebook
@@ -75,11 +77,18 @@ namespace Phonebook
 
             app.UseMiddleware(typeof(ErrorHandlingMiddleware));
 
-            app.UseSwagger();
+            app.UseSwagger(c =>
+            {
+                c.PreSerializeFilters.Add((swagger, httpReq) =>
+                {
+                    if (!env.IsDevelopment())
+                        swagger.Servers = new List<OpenApiServer> { new OpenApiServer { Url = "/phonebook" } };
+                });
+            });
             app.UseSwaggerUI(c =>
             {
-                c.RoutePrefix = string.Empty;
                 c.SwaggerEndpoint(env.IsDevelopment() ? "/swagger/v1/swagger.json" : "/phonebook/swagger/v1/swagger.json", "Phonebook V1");
+                c.RoutePrefix = string.Empty;
             });
 
             app.UseForwardedHeaders(new ForwardedHeadersOptions
